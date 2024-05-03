@@ -7,6 +7,7 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "no-redeclare": "off"
+    "no-redeclare": "off",
+    "class-methods-use-this": "off"
   }
 }

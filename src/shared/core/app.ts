@@ -1,8 +1,9 @@
 // Modules Imports
 import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
 
 // Dotenv Config
-
+dotenv.config();
 // Imports Routes
 
 class App {
