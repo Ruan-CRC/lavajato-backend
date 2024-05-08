@@ -9,6 +9,7 @@ generator client {
 
 model User {
   id        Int       @id @default(autoincrement())
+  idUser       String    @default(uuid())
   name      String
   email     String    @unique
   password  String
@@ -20,7 +21,7 @@ model User {
 model Veiculo {
   id        Int               @id @default(autoincrement())
   placa     String            @unique
-  tipo      String
+  tipo      TiposVeiculos
   userId    Int
   user      User              @relation(fields: [userId], references: [id])
   servicos  VeiculoServico[]
@@ -43,4 +44,13 @@ model VeiculoServico {
   dataFim     DateTime
 
   @@id([veiculoId, servicoId, dataInicio])
+}
+
+enum TiposVeiculos {
+  carro
+  moto
+  caminhao
+  onibus
+  van
+  buggy
 }
