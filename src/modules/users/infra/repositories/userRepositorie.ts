@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from '../../../../shared/infra/prisma/prisma';
-import { CreateUserInterface } from '../../repositoriesInterface/createUserInterface';
+import { CreateUserInterface } from '../../interfaces/createUserInterface';
 
 interface UserOutputDTO {
   id: number

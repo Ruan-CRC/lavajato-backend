@@ -2,6 +2,9 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
 
+import usersRouters from '@/modules/users/infra/http/routers/users.routers';
+import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculo.routers';
+
 // Dotenv Config
 dotenv.config();
 // Imports Routes
@@ -30,7 +33,9 @@ class App {
     // Health Check
     this.server.get('/api/v1/healthcheck', (request: Request, response: Response) => response.status(200).json({ Ok: true }));
 
-    this.server.get('/api/v1/users', (request, response) => response.status(200).json({ users: { name: 'John Doe', email: 'laele@gmailç.com' } }));
+    this.server.use('/api/v1/users', usersRouters);
+
+    this.server.use('/api/v1/veiculos', veiculoRouters);
   }
 }
 
