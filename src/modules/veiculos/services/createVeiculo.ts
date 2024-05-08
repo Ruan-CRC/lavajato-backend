@@ -14,11 +14,11 @@ export default class CreateVeiculoService {
     private createVeiculoInterface: CreateVeiculoInterface,
   ) {}
 
-  async createWithUser(dataVeiculo: VeiculoImputDTO, dataUser: UserImputDTO): Promise<{}> {
+  async createVeiculo(dataVeiculo: VeiculoImputDTO, dataUser: UserImputDTO): Promise<{}> {
     return this.createVeiculoInterface.create({
       placa: dataVeiculo.placa,
       tipo: dataVeiculo.tipo,
-      user: { connect: { id: dataUser.id } },
+      user: dataUser.id,
     });
   }
 }
