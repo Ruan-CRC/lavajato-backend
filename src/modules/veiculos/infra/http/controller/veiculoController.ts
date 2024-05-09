@@ -1,14 +1,46 @@
 import { Request, Response } from 'express';
 import CreateVeiculoService from '@/modules/veiculos/services/createVeiculo';
+import AddServicosService from '../../../services/addServicos';
+import prisma from '@/shared/infra/prisma/prisma';
 
 export default class VeiculoController {
-  constructor(private createVeiculoService: CreateVeiculoService) {}
+  constructor(
+    private createVeiculoService: CreateVeiculoService,
+    private addServicoService: AddServicosService,
+  ) {}
 
   async create(req: Request, res: Response) {
     const { placa, tipo, user } = req.body;
 
-    const veiculo = await this.createVeiculoService.createWithUser({ placa, tipo }, { id: user });
+    try {
+      // TODO: criar use-case de buscar usuário
+      const donoVeiculo = await prisma.user.findUnique({
+        where: {
+          idUser: user,
+        },
+      });
 
-    return res.json(veiculo);
+      if (!donoVeiculo) {
+        throw new Error('Usuário não encontrado!');
+      }
+
+      await this.createVeiculoService.createVeiculo({ placa, tipo }, { id: donoVeiculo.id });
+
+      return res.status(201);
+    } catch (err) {
+      return res.status(404).json({ error: (err as Error).message });
+    }
+  }
+
+  async addServico(req: Request, res: Response) {
+    const { veiculoId, servicoId } = req.body;
+
+    try {
+      await this.addServicoService.add(veiculoId, servicoId);
+
+      return res.status(201);
+    } catch (err) {
+      return res.status(404).json({ error: (err as Error).message });
+    }
   }
 }

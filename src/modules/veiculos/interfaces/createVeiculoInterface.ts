@@ -1,6 +1,11 @@
-import { Prisma, Veiculo } from '@prisma/client';
+import { Veiculo } from '@prisma/client';
 
+interface VeiculoInput {
+  placa: string;
+  tipo: string;
+  user: number
+}
 export interface CreateVeiculoInterface {
-  create(data: Prisma.VeiculoCreateWithoutServicosInput): Promise<Veiculo>
+  create(data: VeiculoInput): Promise<Veiculo>
 }
 // VeiculoCreateWithoutUserInput

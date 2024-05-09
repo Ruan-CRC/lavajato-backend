@@ -5,12 +5,6 @@ interface RequestUser {
   name: string;
   email: string;
   password: string;
-}
-
-interface CreateOutputUserDTO {
-  id: number
-  name: string
-  email: string
   telefone?: string
   endereco?: string
 }
@@ -18,7 +12,7 @@ interface CreateOutputUserDTO {
 export default class CreateUserService {
   constructor(private usersRepository: CreateUserInterface) {}
 
-  async create({ name, email, password }: RequestUser): Promise<CreateOutputUserDTO> {
+  async create({ name, email, password }: RequestUser) {
     /*
     const userExistent = await this.usersRepository.findByEmail(email);
 
@@ -39,18 +33,18 @@ export default class CreateUserService {
       });
     });
 
-    const user = this.usersRepository.create({
+    const user = await this.usersRepository.create({
       name,
       email,
       password: hashedPassword,
     });
 
     return {
-      id: (await user).id,
-      name: (await user).name,
-      email: (await user).email,
-      telefone: (await user).telefone ?? undefined,
-      endereco: (await user).endereco ?? undefined,
+      id: user.idUser,
+      name: user.name,
+      email: user.email,
+      telefone: user.telefone ?? undefined,
+      endereco: user.endereco ?? undefined,
     };
   }
 }

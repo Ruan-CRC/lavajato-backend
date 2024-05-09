@@ -1,11 +1,22 @@
-import { Prisma, Veiculo } from '@prisma/client';
+import { Veiculo, TiposVeiculos } from '@prisma/client';
 import prisma from '../../../../shared/infra/prisma/prisma';
 import { CreateVeiculoInterface } from '../../interfaces/createVeiculoInterface';
+import { AddServicosInterface } from '../../interfaces/addServicoInterface';
 
-export default class VeiculoRepository implements CreateVeiculoInterface {
-  async create(data: Prisma.VeiculoCreateInput): Promise<Veiculo> {
+interface VeiculoInput {
+  placa: string;
+  tipo: TiposVeiculos
+  user: number
+}
+
+export default class VeiculoRepository implements CreateVeiculoInterface, AddServicosInterface {
+  async create(data: VeiculoInput): Promise<Veiculo> {
     const veiculo = await prisma.veiculo.create({
-      data,
+      data: {
+        placa: data.placa,
+        tipo: data.tipo,
+        user: { connect: { id: data.user } },
+      },
     });
 
     return {
@@ -14,5 +25,17 @@ export default class VeiculoRepository implements CreateVeiculoInterface {
       tipo: veiculo.tipo,
       userId: veiculo.userId,
     };
+  }
+
+  async addServicos(veiculoId: number, servicoId: number): Promise<any> {
+    const agenda = await prisma.veiculoServico.create({
+      data: {
+        veiculoId,
+        servicoId,
+        dataInicio: new Date(),
+      },
+    });
+
+    return agenda;
   }
 }

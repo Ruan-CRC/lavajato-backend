@@ -1,7 +1,7 @@
 import { Prisma, User } from '@prisma/client';
 
 interface UserOutputDTO {
-  id: number
+  idUser: string
   name: string
   email: string
   telefone?: string
@@ -9,6 +9,6 @@ interface UserOutputDTO {
 }
 
 export interface CreateUserInterface {
-  findByEmail(id: string): Promise<User | null>
+  findByEmail(email: string): Promise<User | null>
   create(data: Prisma.UserCreateInput): Promise<UserOutputDTO>
 }
