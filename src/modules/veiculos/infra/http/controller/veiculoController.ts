@@ -26,7 +26,7 @@ export default class VeiculoController {
 
       await this.createVeiculoService.createVeiculo({ placa, tipo }, { id: donoVeiculo.id });
 
-      return res.status(201);
+      return res.status(201).json({ message: 'Veículo criado com sucesso!' });
     } catch (err) {
       return res.status(404).json({ error: (err as Error).message });
     }
@@ -36,9 +36,9 @@ export default class VeiculoController {
     const { veiculoId, servicoId } = req.body;
 
     try {
-      await this.addServicoService.add(veiculoId, servicoId);
+      const servico = await this.addServicoService.add(veiculoId, servicoId);
 
-      return res.status(201);
+      return res.status(201).json({ message: 'Serviço adicionado com sucesso!', servico });
     } catch (err) {
       return res.status(404).json({ error: (err as Error).message });
     }
