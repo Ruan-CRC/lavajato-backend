@@ -41,7 +41,7 @@ model VeiculoServico {
   veiculo     Veiculo    @relation(fields: [veiculoId], references: [id])
   servico     Servico    @relation(fields: [servicoId], references: [id])
   dataInicio  DateTime
-  dataFim     DateTime
+  dataFim     DateTime?
 
   @@id([veiculoId, servicoId, dataInicio])
 }

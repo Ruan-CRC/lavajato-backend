@@ -33,7 +33,7 @@ class App {
   routes() {
     // Health Check
     this.server.get('/api/v1/healthcheck', (request: Request, response: Response) => response.status(200).json({ Ok: true }));
-
+    console.log('Routes');
     this.server.use('/api/v1/users', usersRouters);
     this.server.use('/api/v1/veiculos', veiculoRouters);
     this.server.use('/api/v1/servicos', servicosRouters);
