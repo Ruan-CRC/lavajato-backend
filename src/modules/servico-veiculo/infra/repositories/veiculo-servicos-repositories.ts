@@ -30,4 +30,16 @@ export default class VeiculoServicosRepository implements UpdateServicosInterfac
       dataFim: servico.dataFim,
     };
   }
+
+  async addServicos(veiculoId: number, servicoId: number): Promise<any> {
+    const agenda = await prisma.veiculoServico.create({
+      data: {
+        veiculoId,
+        servicoId,
+        dataInicio: new Date(),
+      },
+    });
+
+    return agenda;
+  }
 }
