@@ -6,5 +6,6 @@ const router = Router();
 const ServicoVeiculo = ServicoVeiculoFactory.createServicoVeiculoController();
 
 router.put('/update', (req, res) => ServicoVeiculo.update(req, res));
+router.post('/addServico', (req, res) => ServicoVeiculo.addServico(req, res));
 
 export default router;
