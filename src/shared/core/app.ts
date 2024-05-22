@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import usersRouters from '@/modules/users/infra/http/routers/users.routers';
 import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculo.routers';
 import servicosRouters from '@/modules/servicos/infra/http/routers/servicos.routers';
+import servicoVeiculoRouters from '@/modules/servico-veiculo/infra/http/routers/servicoVeiculo.router';
 
 // Dotenv Config
 dotenv.config();
@@ -33,10 +34,11 @@ class App {
   routes() {
     // Health Check
     this.server.get('/api/v1/healthcheck', (request: Request, response: Response) => response.status(200).json({ Ok: true }));
-    console.log('Routes');
+
     this.server.use('/api/v1/users', usersRouters);
     this.server.use('/api/v1/veiculos', veiculoRouters);
     this.server.use('/api/v1/servicos', servicosRouters);
+    this.server.use('/api/v1/servico/veiculos', servicoVeiculoRouters);
   }
 }
 
