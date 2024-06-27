@@ -1,7 +1,7 @@
-import { UpdateServicosInterface } from '../interfaces/updateServico';
+import { ServicoVeiculoInterface } from '../interfaces/servicoVeiculoInterface';
 
 export default class UpdateServicoService {
-  constructor(private updateServico: UpdateServicosInterface) {}
+  constructor(private updateServico: ServicoVeiculoInterface) { }
 
   async update(idVeiculo: number, idServico: number, dataInicio: string, dataFim?: string) {
     const servico = await this.updateServico
