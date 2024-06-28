@@ -11,7 +11,8 @@
     "test": "jest",
     "dev": "tsx watch src/shared/core/server.ts",
     "prisma:migrate": "npx prisma migrate dev",
-    "prisma:studio": "npx prisma studio"
+    "prisma:studio": "npx prisma studio",
+    "prisma:seed": "tsx src/shared/infra/prisma/seed/seedUser.ts"
   },
   "keywords": [],
   "author": "",
