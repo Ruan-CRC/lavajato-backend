@@ -9,6 +9,7 @@ import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculo.router
 import servicosRouters from '@/modules/servicos/infra/http/routers/servicos.routers';
 import servicoVeiculoRouters from '@/modules/servico-veiculo/infra/http/routers/servicoVeiculo.router';
 
+import SocketSingleton from '../services/websocket/socketSingleton';
 import agendaHandler from '@/shared/services/websocket/handlers/agendaHandler';
 
 // Dotenv Config
@@ -19,16 +20,13 @@ class App {
 
   public app: express.Application;
 
-  public io: SocketIOServer;
+  private io: SocketIOServer;
 
   constructor() {
     this.app = express();
     this.server = createServer(this.app);
-    this.io = new SocketIOServer(this.server, {
-      cors: {
-        origin: 'http://localhost:5173',
-      },
-    });
+    SocketSingleton.init(this.server);
+    this.io = SocketSingleton.getInstance();
 
     this.connection();
     this.middlewares();

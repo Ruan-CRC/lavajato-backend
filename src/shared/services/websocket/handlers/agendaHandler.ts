@@ -8,6 +8,6 @@ const servicosAgendados = new ServicosAgendados(repositorie);
 const agendaController = new AgendaController(servicosAgendados);
 
 export default function agendaHandler(io: Server, socket: Socket) {
-  console.log('Socket connected: ', socket.id);
+  socket.on('agenda:join', agendaController.enviarAgendas(socket));
   socket.on('agenda:create', agendaController.createAgenda());
 }
