@@ -10,16 +10,14 @@ interface RequestUser {
 }
 
 export default class CreateUserService {
-  constructor(private usersRepository: CreateUserInterface) {}
+  constructor(private usersRepository: CreateUserInterface) { }
 
   async create({ name, email, password }: RequestUser) {
-    /*
     const userExistent = await this.usersRepository.findByEmail(email);
 
     if (userExistent) {
       throw new Error('Email address already used.');
     }
-    */
 
     const hashedPassword = await new Promise<string>((resolve, reject) => {
       bcryptjs.genSalt(6, (err: any, salt: any) => {
