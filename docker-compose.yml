@@ -7,8 +7,23 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - .docker/postgres_data:/var/lib/postgresql/data
     ports:
       - "5433:5432"
-volumes:
-  postgres_data:
+    networks:
+      - lavajato-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - "88:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=123456789
+    networks:
+      - lavajato-network
+
+networks:
+  lavajato-network:
+    driver: bridge
