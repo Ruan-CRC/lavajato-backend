@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 
-import ServicosAgendados from '@/modules/servico-veiculo/services/servicosAgendados';
+import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
 
 // agendaController.ts
 class AgendaController {

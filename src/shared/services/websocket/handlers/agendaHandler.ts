@@ -1,6 +1,6 @@
 import { Socket, Server } from 'socket.io';
-import ServicosAgendados from '@/modules/servico-veiculo/services/servicosAgendados';
-import VeiculoServicosRepository from '@/modules/servico-veiculo/infra/repositories/veiculo-servicos-repositories';
+import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
+import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
 import AgendaController from '../controllers/agendaController';
 
 const repositorie = new VeiculoServicosRepository();

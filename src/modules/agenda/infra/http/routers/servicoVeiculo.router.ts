@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import ServicoVeiculoFactory from '@/modules/servico-veiculo/utils/factory';
+import ServicoVeiculoFactory from '@/modules/agenda/utils/factory';
 
 const router = Router();
 const ServicoVeiculo = ServicoVeiculoFactory.createServicoVeiculoController();
