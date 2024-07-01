@@ -1,13 +1,21 @@
 import { Request, Response } from 'express';
 
-import UpdateServicoService from '@/modules/servico-veiculo/services/updateServicoService';
-import AddServicosService from '@/modules/servico-veiculo/services/addServicos';
+import UpdateServicoService from '@/modules/agenda/services/updateServicoService';
+import AddServicosService from '@/modules/agenda/services/addServicos';
+import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
 
 export default class ServicoVeiculoController {
   constructor(
     private updateServico: UpdateServicoService,
     private addServicoService: AddServicosService,
-  ) {}
+    private servicosAgendados: ServicosAgendados,
+  ) { }
+
+  async servicosEmAgendamento(request: Request, response: Response) {
+    const data = await this.servicosAgendados.servicosAgendados();
+
+    return response.status(200).json({ data });
+  }
 
   async update(request: Request, response: Response) {
     const {

@@ -1,8 +1,19 @@
 import { VeiculoServico } from '@prisma/client';
-import { UpdateServicosInterface } from '../../interfaces/updateServico';
+import { ServicoVeiculoInterface } from '../../interfaces/servicoVeiculoInterface';
 import prisma from '@/shared/infra/prisma/prisma';
 
-export default class VeiculoServicosRepository implements UpdateServicosInterface {
+export default class VeiculoServicosRepository implements ServicoVeiculoInterface {
+  async getServicosEmAgendamento(): Promise<{
+    veiculoId: number; servicoId: number; dataInicio: Date; dataFim: Date | null;
+  }[]> {
+    const servicosEmAgendamento = await prisma.veiculoServico.findMany({
+      where: {
+        dataFim: null,
+      },
+    });
+    return servicosEmAgendamento;
+  }
+
   async updateServico(
     idVeiculo: number,
     idServico: number,
