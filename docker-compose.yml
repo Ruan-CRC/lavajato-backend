@@ -1,13 +1,13 @@
-version: '3.8'
+version: '3'
 services:
   db:
-    image: postgres:latest
+    image: bitnami/postgresql:latest
     environment:
-      POSTGRES_DB: lavajato
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRESQL_DATABASE: lavajato
+      POSTGRESQL_USERNAME: root
+      POSTGRESQL_PASSWORD: root
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - .docker/postgres_data:/bitnami/postgresql/data
     ports:
       - "5433:5432"
 volumes:
