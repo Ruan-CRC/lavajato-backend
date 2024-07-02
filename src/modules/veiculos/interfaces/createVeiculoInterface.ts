@@ -1,11 +1,7 @@
-import { Veiculo } from '@prisma/client';
+// import { Veiculo } from '@prisma/client';
+import RepositoryInterface from '@/shared/infra/modules/repository/repositoryInterface';
 
-interface VeiculoInput {
-  placa: string;
-  tipo: string;
-  user: number
-}
-export interface CreateVeiculoInterface {
-  create(data: VeiculoInput): Promise<Veiculo>
+export interface CreateVeiculoInterface extends RepositoryInterface {
+  // trocaDonoVeiculo
 }
 // VeiculoCreateWithoutUserInput

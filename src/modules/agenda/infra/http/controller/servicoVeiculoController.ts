@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import UpdateServicoService from '@/modules/servico-veiculo/services/updateServicoService';
-import AddServicosService from '@/modules/servico-veiculo/services/addServicos';
-import ServicosAgendados from '@/modules/servico-veiculo/services/servicosAgendados';
+import UpdateServicoService from '@/modules/agenda/services/updateServicoService';
+import AddServicosService from '@/modules/agenda/services/addServicos';
+import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
 
 export default class ServicoVeiculoController {
   constructor(

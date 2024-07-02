@@ -1,6 +1,7 @@
-import { Prisma, User } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-interface UserOutputDTO {
+export interface UserOutputDTO {
+  id: string
   idUser: string
   name: string
   email: string
@@ -9,6 +10,6 @@ interface UserOutputDTO {
 }
 
 export interface CreateUserInterface {
-  findByEmail(email: string): Promise<User | null>
+  findByEmail(email: string): Promise<UserOutputDTO | boolean>
   create(data: Prisma.UserCreateInput): Promise<UserOutputDTO>
 }

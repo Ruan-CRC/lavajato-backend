@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import usersRouters from '@/modules/users/infra/http/routers/users.routers';
 import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculo.routers';
 import servicosRouters from '@/modules/servicos/infra/http/routers/servicos.routers';
-import servicoVeiculoRouters from '@/modules/servico-veiculo/infra/http/routers/servicoVeiculo.router';
+import servicoVeiculoRouters from '@/modules/agenda/infra/http/routers/servicoVeiculo.router';
 
 import SocketSingleton from '../services/websocket/socketSingleton';
 import agendaHandler from '@/shared/services/websocket/handlers/agendaHandler';
@@ -50,7 +50,7 @@ class App {
     this.app.use('/api/v1/users', usersRouters);
     this.app.use('/api/v1/veiculos', veiculoRouters);
     this.app.use('/api/v1/servicos', servicosRouters);
-    this.app.use('/api/v1/servico/veiculos', servicoVeiculoRouters);
+    this.app.use('/api/v1/agenda', servicoVeiculoRouters);
   }
 
   private handleSocketEvents(socket: Socket) {
