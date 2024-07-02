@@ -24,7 +24,12 @@ describe('GetVeiculoService', () => {
     });
     const veiculo = await getVeiculoService.get('1');
 
-    expect(veiculo).toBe('1');
+    expect(veiculo).toBe({
+      id: '1',
+      placa: 'AVF-1245',
+      tipo: 'carro',
+      userId: 1,
+    });
   });
 
   it('veiculo já registrado', async () => {
