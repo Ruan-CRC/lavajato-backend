@@ -36,6 +36,7 @@ describe('CreateUserService', () => {
     });
 
     mockUsersRepository.create.mockResolvedValue({
+      id: '1',
       idUser: 'sdgdfgadfheyerywreyf',
       name: userData.name,
       email: userData.email,
@@ -67,13 +68,12 @@ describe('CreateUserService', () => {
     };
 
     mockUsersRepository.findByEmail.mockResolvedValue({
-      id: 1,
+      id: '1',
       idUser: 'sdasdasd',
       name: userData.name,
       email: userData.email,
-      password: 'hashed',
-      telefone: null,
-      endereco: null,
+      telefone: undefined,
+      endereco: undefined,
     });
 
     await expect(createUserService.create(userData)).rejects.toThrow('Email address already used.');
