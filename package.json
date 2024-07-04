@@ -5,14 +5,17 @@
   "type": "module",
   "main": "index.js",
   "prisma": {
-    "schema": "./src/shared/infra/prisma/schema.prisma"
+    "schema": "./src/shared/infra/prisma/schema.prisma",
+    "seed": "tsx src/shared/infra/prisma/seed/seed.ts"
   },
   "scripts": {
     "test": "jest",
     "dev": "tsx watch src/shared/core/server.ts",
-    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:migrate": "prisma migrate dev && npm run postmigrate",
     "prisma:studio": "npx prisma studio",
-    "prisma:seed": "tsx src/shared/infra/prisma/seed/seed.ts"
+    "prisma:seed": "tsx src/shared/infra/prisma/seed/seedPrisma.ts",
+    "postmigrate": "npx @snaplet/seed sync",
+    "snaplet:seed": "npx prisma db seed"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +32,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@snaplet/copycat": "^5.0.0",
+    "@snaplet/seed": "^0.97.20",
     "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
