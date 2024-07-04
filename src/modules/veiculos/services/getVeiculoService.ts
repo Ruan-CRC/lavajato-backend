@@ -6,6 +6,10 @@ export default class GetVeiculoService {
   async get(id: string) {
     const veiculo = await this.veiculosRepository.findById(id);
 
+    if (!veiculo) {
+      return 'veiculo não encontrado';
+    }
+
     return veiculo;
   }
 }

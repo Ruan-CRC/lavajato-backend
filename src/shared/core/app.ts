@@ -1,5 +1,7 @@
 // Modules Imports
 import express, { Request, Response } from 'express';
+import cors from 'cors';
+
 import { createServer, Server as HTTPServer } from 'node:http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import dotenv from 'dotenv';
@@ -14,6 +16,10 @@ import agendaHandler from '@/shared/services/websocket/handlers/agendaHandler';
 
 // Dotenv Config
 dotenv.config();
+
+const corsOptions = {
+  origin: '*',
+};
 
 class App {
   public server: HTTPServer;
@@ -41,6 +47,7 @@ class App {
   middlewares() {
     this.app.use(express.json({ limit: '50mb' }));
     this.app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+    this.app.use(cors(corsOptions));
   }
 
   routes() {

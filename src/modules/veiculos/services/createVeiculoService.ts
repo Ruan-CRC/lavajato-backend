@@ -15,7 +15,7 @@ export default class CreateVeiculoService {
   ) { }
 
   async create(dataVeiculo: VeiculoImputDTO, dataUser: UserImputDTO): Promise<string | boolean> {
-    const idVeiculo = this.createVeiculoInterface.create({
+    const idVeiculo = await this.createVeiculoInterface.create({
       placa: dataVeiculo.placa,
       tipo: dataVeiculo.tipo,
       user: dataUser.id,

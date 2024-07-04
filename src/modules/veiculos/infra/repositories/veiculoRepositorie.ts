@@ -41,6 +41,10 @@ export default class VeiculoRepository implements RepositoryInterface, CreateVei
       },
     });
 
+    if (!veiculo) {
+      return false;
+    }
+
     return veiculo.id.toString();
   }
 }
