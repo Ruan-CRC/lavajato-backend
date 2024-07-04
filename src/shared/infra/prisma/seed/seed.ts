@@ -1,107 +1,46 @@
+import { createSeedClient } from '@snaplet/seed';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const placas = ['XYZ1234', 'ABC5678'];
+const main = async () => {
+  const seed = await createSeedClient();
 
-async function main() {
-  await prisma.user.upsert({
-    where: { email: 'alice@prisma.io' },
-    update: {},
-    create: {
-      email: 'alice@prisma.io',
-      name: 'Alice',
-      password: 'password',
-    },
-  });
-  await prisma.user.upsert({
-    where: { email: 'bob@prisma.io' },
-    update: {},
-    create: {
-      email: 'bob@prisma.io',
-      name: 'Bob',
-      password: 'password',
-    },
-  });
-  await prisma.veiculo.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      placa: placas[0],
-      tipo: 'carro',
-      user: {
-        connect: { email: 'bob@prisma.io' },
-      },
-    },
-  });
-  await prisma.veiculo.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      placa: placas[1],
-      tipo: 'moto',
-      user: {
-        connect: { email: 'alice@prisma.io' },
-      },
-    },
-  });
+  // Reset the database
+  await seed.$resetDatabase();
 
-  const veiculos = await prisma.veiculo.findMany({
-    where: {
-      placa: {
-        in: placas,
-      },
-    },
-    select: {
-      id: true,
-      placa: true,
-    },
-  });
+  // Seed users, vehicles, and services
+  await seed.user((x) => x(10));
+  await seed.veiculo((x) => x(10));
+  await seed.servico((x) => x(5));
 
-  if (veiculos.length !== placas.length) {
-    throw new Error('Nem todos os veículos foram encontrados');
-  }
+  console.log('Database seeded successfully!');
 
-  // Passo 2: Fazer o upsert do serviço e conectar ao veículo usando o id obtido
-  await prisma.servico.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      nome: 'Troca de óleo',
-      descricao: 'Troca de óleo do motor',
-      valor: 100,
-      veiculos: {
-        create: {
-          veiculoId: veiculos[0].id,
-          dataInicio: new Date(),
-        },
-      },
-    },
-  });
-  await prisma.servico.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      id: 2,
-      nome: 'Lavagem completa',
-      descricao: 'Lava a lataria e o motor do veículo',
-      valor: 150,
-      veiculos: {
-        create: {
-          veiculoId: veiculos[1].id,
-          dataInicio: new Date(),
-        },
-      },
-    },
-  });
-}
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+  // Function to associate services to vehicles
+  const associateServiceToVehicle = async () => {
+    try {
+      const veiculos = await prisma.veiculo.findMany();
+      const servicos = await prisma.servico.findMany();
+
+      veiculos.forEach(async (veiculo) => {
+        const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
+        await prisma.veiculoServico.create({
+          data: {
+            veiculoId: veiculo.id,
+            servicoId: randomServico.id,
+            dataInicio: new Date(),
+          },
+        });
+      });
+
+      console.log('Service associated to vehicles successfully!');
+    } catch (error) {
+      console.error('Error associating service to vehicles:', error);
+    }
+  };
+
+  // Run the association function every 2 minutes
+  setInterval(associateServiceToVehicle, 60000);
+};
+
+main();
