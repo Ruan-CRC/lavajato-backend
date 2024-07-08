@@ -7,7 +7,7 @@ services:
       POSTGRESQL_USERNAME: root
       POSTGRESQL_PASSWORD: root
     volumes:
-      - .docker/postgres_data:/bitnami/postgresql/data
+      - .docker/postgres_data:/bitnami/postgresql/data:rw
     ports:
       - "5433:5432"
     networks:
