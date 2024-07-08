@@ -4,15 +4,15 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const main = async () => {
-  const seed = await createSeedClient();
+  const seed: any = createSeedClient();
 
   // Reset the database
   await seed.$resetDatabase();
 
   // Seed users, vehicles, and services
-  await seed.user((x) => x(10));
-  await seed.veiculo((x) => x(10));
-  await seed.servico((x) => x(5));
+  await seed.user((x: (arg0: number) => any) => x(10));
+  await seed.veiculo((x: (arg0: number) => any) => x(10));
+  await seed.servico((x: (arg0: number) => any) => x(5));
 
   console.log('Database seeded successfully!');
 
@@ -28,7 +28,7 @@ const main = async () => {
           data: {
             veiculoId: veiculo.id,
             servicoId: randomServico.id,
-            dataInicio: new Date(),
+            dataInicio: new Date().setHours(2).toString(),
           },
         });
       });
