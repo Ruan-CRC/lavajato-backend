@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Socket, Server } from 'socket.io';
+import { Request } from 'express';
+import { WebSocket } from 'ws';
+
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
 
 class AgendaController {
@@ -7,7 +9,7 @@ class AgendaController {
     private servicosAgendados: ServicosAgendados,
   ) { }
 
-  createAgenda = async (io: Server, socket: Socket) => {
+  createAgenda = async (ws: WebSocket, req: Request) => {
     try {
       const result = 'Nenhum serviço agendado';
       console.log(result);
@@ -16,11 +18,11 @@ class AgendaController {
     }
   };
 
-  enviarAgendas = async (io: Server, socket: Socket) => {
+  enviarAgendas = async (ws: WebSocket, req: Request) => {
     try {
-      socket.join('agenda');
+      console.log('Enviando agendas');
       const result = await this.servicosAgendados.servicosAgendados();
-      socket.emit('agenda:join', { status: 'success', result });
+      ws.send(JSON.stringify({ event: 'agenda:agendados', result }));
     } catch (error) {
       console.log(error);
     }

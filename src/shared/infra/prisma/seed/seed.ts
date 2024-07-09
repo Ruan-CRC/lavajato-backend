@@ -1,47 +1,52 @@
 import { createSeedClient } from '@snaplet/seed';
 import { PrismaClient } from '@prisma/client';
 
+import { WebSocket } from 'ws';
+
 const prisma = new PrismaClient();
 
-const main = async () => {
-  const seed: any = createSeedClient();
+async function associateServiceToVehicle(ws: WebSocket) {
+  try {
+    const veiculos = await prisma.veiculo.findMany({ take: 4 });
+    const servicos = await prisma.servico.findMany();
 
-  // Reset the database
-  await seed.$resetDatabase();
+    veiculos.forEach(async (veiculo, index) => {
+      const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
+      const agendamento = new Date();
+      agendamento.setHours(agendamento.getHours() + (index * 4));
 
-  // Seed users, vehicles, and services
-  await seed.user((x: (arg0: number) => any) => x(10));
-  await seed.veiculo((x: (arg0: number) => any) => x(10));
-  await seed.servico((x: (arg0: number) => any) => x(5));
-
-  // Function to associate services to vehicles
-  const associateServiceToVehicle = async () => {
-    try {
-      const veiculos = await prisma.veiculo.findMany({ take: 4 });
-      const servicos = await prisma.servico.findMany();
-
-      veiculos.forEach(async (veiculo, index) => {
-        const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
-        const agendamento = new Date();
-        agendamento.setHours(agendamento.getHours() + (index * 4));
-
-        await prisma.veiculoServico.create({
-          data: {
-            veiculoId: veiculo.id,
-            servicoId: randomServico.id,
-            dataInicio: agendamento,
-          },
-        });
+      const payload = await prisma.veiculoServico.create({
+        data: {
+          veiculoId: veiculo.id,
+          servicoId: randomServico.id,
+          dataInicio: agendamento,
+        },
       });
 
-      console.log('Service associated to vehicles successfully!');
-    } catch (error) {
-      console.error('Error associating service to vehicles:', error);
-    }
-  };
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(payload));
+      } else {
+        ws.on('open', () => {
+          ws.send(JSON.stringify(payload));
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error associating service to vehicles:', error);
+  }
+}
 
-  // Run the association function every 2 minutes
-  setInterval(associateServiceToVehicle, 60000);
-};
+async function main(ws: WebSocket) {
+  const seed = await createSeedClient();
+  await seed.$resetDatabase();
 
-main();
+  await seed.user((x) => x(10));
+  await seed.veiculo((x) => x(10));
+  await seed.servico((x) => x(5));
+
+  setInterval(async () => {
+    await associateServiceToVehicle(ws);
+  }, 10000);
+}
+
+export default main;

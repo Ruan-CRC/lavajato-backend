@@ -29,6 +29,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "socket.io": "^4.7.5",
+    "ws": "^8.18.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "@snaplet/seed": "^0.97.20",
     "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.12",
+    "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
     "eslint": "^8.57.0",
