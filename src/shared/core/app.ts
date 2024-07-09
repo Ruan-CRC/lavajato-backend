@@ -1,9 +1,9 @@
 // Modules Imports
 import express, { Request, Response } from 'express';
-import cors from 'cors';
-
 import { createServer, Server as HTTPServer } from 'node:http';
-import { Server as SocketIOServer, Socket } from 'socket.io';
+import { WebSocketServer, WebSocket } from 'ws';
+
+import cors from 'cors';
 import dotenv from 'dotenv';
 
 import usersRouters from '@/modules/users/infra/http/routers/users.routers';
@@ -11,7 +11,6 @@ import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculo.router
 import servicosRouters from '@/modules/servicos/infra/http/routers/servicos.routers';
 import servicoVeiculoRouters from '@/modules/agenda/infra/http/routers/servicoVeiculo.router';
 
-import SocketSingleton from '../services/websocket/socketSingleton';
 import agendaHandler from '@/shared/services/websocket/handlers/agendaHandler';
 
 // Dotenv Config
@@ -26,13 +25,12 @@ class App {
 
   public app: express.Application;
 
-  private io: SocketIOServer;
+  public wss: WebSocketServer;
 
   constructor() {
     this.app = express();
     this.server = createServer(this.app);
-    SocketSingleton.init(this.server);
-    this.io = SocketSingleton.getInstance();
+    this.wss = new WebSocketServer({ server: this.server });
 
     this.connection();
     this.middlewares();
@@ -60,12 +58,8 @@ class App {
     this.app.use('/api/v1/agenda', servicoVeiculoRouters);
   }
 
-  private handleSocketEvents(socket: Socket) {
-    agendaHandler(this.io, socket);
-  }
-
   webSocketEvents() {
-    this.io.on('connection', this.handleSocketEvents);
+    this.wss.on('connection', (ws: WebSocket, req: Request) => agendaHandler(ws, req));
   }
 
   start(port: String) {

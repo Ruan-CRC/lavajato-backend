@@ -1,47 +1,63 @@
 import { createSeedClient } from '@snaplet/seed';
 import { PrismaClient } from '@prisma/client';
 
+import { WebSocket } from 'ws';
+
 const prisma = new PrismaClient();
 
-const main = async () => {
-  const seed: any = createSeedClient();
+const horasEntreServicos = 4;
 
-  // Reset the database
+async function associateServiceToVehicle(ws: WebSocket, data: Date = new Date()) {
+  try {
+    const veiculos = await prisma.veiculo.findMany();
+    const servicos = await prisma.servico.findMany();
+
+    const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
+    const randomVeiculo = veiculos[Math.floor(Math.random() * veiculos.length)];
+
+    const payload = await prisma.veiculoServico.create({
+      data: {
+        veiculoId: randomVeiculo.id,
+        servicoId: randomServico.id,
+        dataInicio: data,
+      },
+    });
+
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(payload));
+    } else {
+      ws.on('open', () => {
+        ws.send(JSON.stringify(payload));
+      });
+    }
+  } catch (error) {
+    console.error('Error associating service to vehicles:', error);
+  }
+}
+
+async function main(ws: WebSocket) {
+  const seed = await createSeedClient();
   await seed.$resetDatabase();
 
-  // Seed users, vehicles, and services
-  await seed.user((x: (arg0: number) => any) => x(10));
-  await seed.veiculo((x: (arg0: number) => any) => x(10));
-  await seed.servico((x: (arg0: number) => any) => x(5));
+  await seed.user((x) => x(10));
+  await seed.veiculo((x) => x(10));
+  await seed.servico((x) => x(5));
 
-  // Function to associate services to vehicles
-  const associateServiceToVehicle = async () => {
-    try {
-      const veiculos = await prisma.veiculo.findMany({ take: 4 });
-      const servicos = await prisma.servico.findMany();
+  let agendamento: Date | number = new Date();
 
-      veiculos.forEach(async (veiculo, index) => {
-        const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
-        const agendamento = new Date();
-        agendamento.setHours(agendamento.getHours() + (index * 4));
+  let i = 25;
 
-        await prisma.veiculoServico.create({
-          data: {
-            veiculoId: veiculo.id,
-            servicoId: randomServico.id,
-            dataInicio: agendamento,
-          },
-        });
-      });
-
-      console.log('Service associated to vehicles successfully!');
-    } catch (error) {
-      console.error('Error associating service to vehicles:', error);
+  const intervalId = setInterval(async () => {
+    if (i === 0) {
+      clearInterval(intervalId);
+      return;
     }
-  };
 
-  // Run the association function every 2 minutes
-  setInterval(associateServiceToVehicle, 60000);
-};
+    await associateServiceToVehicle(ws, new Date(agendamento));
+    agendamento = new Date(agendamento).valueOf() + horasEntreServicos * 60 * 60 * 1000;
 
-main();
+    i -= 1;
+  }, 10000);
+}
+
+export default main;
