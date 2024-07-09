@@ -68,7 +68,7 @@ class App {
     this.io.on('connection', this.handleSocketEvents);
   }
 
-  start(port: number) {
+  start(port: String) {
     this.server.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });

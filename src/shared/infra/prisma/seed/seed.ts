@@ -14,21 +14,22 @@ const main = async () => {
   await seed.veiculo((x: (arg0: number) => any) => x(10));
   await seed.servico((x: (arg0: number) => any) => x(5));
 
-  console.log('Database seeded successfully!');
-
   // Function to associate services to vehicles
   const associateServiceToVehicle = async () => {
     try {
-      const veiculos = await prisma.veiculo.findMany();
+      const veiculos = await prisma.veiculo.findMany({ take: 4 });
       const servicos = await prisma.servico.findMany();
 
-      veiculos.forEach(async (veiculo) => {
+      veiculos.forEach(async (veiculo, index) => {
         const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
+        const agendamento = new Date();
+        agendamento.setHours(agendamento.getHours() + (index * 4));
+
         await prisma.veiculoServico.create({
           data: {
             veiculoId: veiculo.id,
             servicoId: randomServico.id,
-            dataInicio: new Date().setHours(2).toString(),
+            dataInicio: agendamento,
           },
         });
       });
