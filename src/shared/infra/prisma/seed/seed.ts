@@ -5,32 +5,31 @@ import { WebSocket } from 'ws';
 
 const prisma = new PrismaClient();
 
-async function associateServiceToVehicle(ws: WebSocket) {
+const horasEntreServicos = 4;
+
+async function associateServiceToVehicle(ws: WebSocket, data: Date = new Date()) {
   try {
-    const veiculos = await prisma.veiculo.findMany({ take: 4 });
+    const veiculos = await prisma.veiculo.findMany();
     const servicos = await prisma.servico.findMany();
 
-    veiculos.forEach(async (veiculo, index) => {
-      const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
-      const agendamento = new Date();
-      agendamento.setHours(agendamento.getHours() + (index * 4));
+    const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
+    const randomVeiculo = veiculos[Math.floor(Math.random() * veiculos.length)];
 
-      const payload = await prisma.veiculoServico.create({
-        data: {
-          veiculoId: veiculo.id,
-          servicoId: randomServico.id,
-          dataInicio: agendamento,
-        },
-      });
-
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(payload));
-      } else {
-        ws.on('open', () => {
-          ws.send(JSON.stringify(payload));
-        });
-      }
+    const payload = await prisma.veiculoServico.create({
+      data: {
+        veiculoId: randomVeiculo.id,
+        servicoId: randomServico.id,
+        dataInicio: data,
+      },
     });
+
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(payload));
+    } else {
+      ws.on('open', () => {
+        ws.send(JSON.stringify(payload));
+      });
+    }
   } catch (error) {
     console.error('Error associating service to vehicles:', error);
   }
@@ -44,8 +43,20 @@ async function main(ws: WebSocket) {
   await seed.veiculo((x) => x(10));
   await seed.servico((x) => x(5));
 
-  setInterval(async () => {
-    await associateServiceToVehicle(ws);
+  let agendamento: Date | number = new Date();
+
+  let i = 25;
+
+  const intervalId = setInterval(async () => {
+    if (i === 0) {
+      clearInterval(intervalId);
+      return;
+    }
+
+    await associateServiceToVehicle(ws, new Date(agendamento));
+    agendamento = new Date(agendamento).valueOf() + horasEntreServicos * 60 * 60 * 1000;
+
+    i -= 1;
   }, 10000);
 }
 
