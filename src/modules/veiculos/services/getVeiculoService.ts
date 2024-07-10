@@ -1,10 +1,10 @@
-import VeiculoRepository from '../infra/repositories/veiculoRepositorie';
+import { VeiculoInterface } from '../interfaces/veiculoInterface';
 
 export default class GetVeiculoService {
-  constructor(private veiculosRepository: VeiculoRepository) { }
+  constructor(private veiculoInterface: VeiculoInterface) { }
 
   async get(id: string) {
-    const veiculo = await this.veiculosRepository.findById(id);
+    const veiculo = await this.veiculoInterface.index(id);
 
     if (!veiculo) {
       return 'veiculo não encontrado';

@@ -7,7 +7,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import usersRouters from '@/modules/users/infra/http/routers/users.routers';
-import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculo.routers';
+import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculoRouters';
 import servicosRouters from '@/modules/servicos/infra/http/routers/servicosRouters';
 import servicoVeiculoRouters from '@/modules/agenda/infra/http/routers/servicoVeiculo.router';
 
