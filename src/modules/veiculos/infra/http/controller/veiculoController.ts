@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import prisma from '@/shared/infra/prisma/prisma';
+
 import CreateVeiculoService from '@/modules/veiculos/services/createVeiculoService';
 import GetVeiculoService from '@/modules/veiculos/services/getVeiculoService';
-import prisma from '@/shared/infra/prisma/prisma';
+import AllVeiculosService from '@/modules/veiculos/services/allVeiculosService';
 
 export default class VeiculoController {
   constructor(
     private createVeiculoService: CreateVeiculoService,
     private getVeiculoService: GetVeiculoService,
+    private allVeiculosService: AllVeiculosService,
   ) { }
 
   async create(req: Request, res: Response) {
@@ -45,9 +48,20 @@ export default class VeiculoController {
     try {
       const veiculo = await this.getVeiculoService.get(id);
 
-      return res.status(200).json({ veiculo });
+      return res.status(200).json({
+        id: veiculo.id,
+        placa: veiculo.placa,
+        tipo: veiculo.tipo,
+        user: veiculo.userId,
+      });
     } catch (err) {
       return res.status(404).json({ error: (err as Error).message });
     }
+  }
+
+  async all(res: Response) {
+    const veiculos = await this.allVeiculosService.get();
+
+    return res.status(200).json({ data: veiculos });
   }
 }

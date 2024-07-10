@@ -1,5 +1,5 @@
 import GetVeiculoService from '../getVeiculoService';
-import { CreateVeiculoInterface } from '../../interfaces/createVeiculoInterface';
+import { CreateVeiculoInterface } from '../../interfaces/veiculoInterface';
 
 describe('GetVeiculoService', () => {
   let getVeiculoService: GetVeiculoService;

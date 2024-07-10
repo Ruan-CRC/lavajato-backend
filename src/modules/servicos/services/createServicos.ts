@@ -1,22 +1,11 @@
-import CreateServicosInterface from '../interfaces/createServicosInterface';
-
-interface CreateInputDTO {
-  nome: string;
-  descricao?: string;
-  valor: number;
-}
-
-interface CreateOutputDTO {
-  nome: string;
-  descricao?: string;
-  valor: number;
-}
+import ServicosInterface from '../interfaces/servicosInterface';
+import { CreateInputDTO, CreateOutputDTO } from './DTOs/mainFunctions';
 
 export default class CreateServicoService {
-  constructor(private createServicosInterface: CreateServicosInterface) {}
+  constructor(private servicosInterface: ServicosInterface) { }
 
   async create(data: CreateInputDTO): Promise<CreateOutputDTO> {
-    const servico = await this.createServicosInterface.create(data);
+    const servico = await this.servicosInterface.create(data);
     return {
       nome: servico.nome,
       descricao: servico.descricao ?? '',
