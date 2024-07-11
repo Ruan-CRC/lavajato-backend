@@ -8,45 +8,63 @@ generator client {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  idUser       String    @unique @default(uuid())
-  name      String
-  email     String    @unique
-  password  String
-  telefone  String?
-  endereco  String?
-  veiculos  Veiculo[]
+  id       Int       @id @default(autoincrement())
+  idUser   String    @unique @default(uuid())
+  name     String
+  email    String    @unique
+  password String
+  telefone String?
+  endereco String?
+  veiculos Veiculo[]
 }
 
 model Veiculo {
-  id        Int               @id @default(autoincrement())
-  placa     String            @unique
-  tipo      TiposVeiculos
-  userId    Int
-  user      User              @relation(fields: [userId], references: [id])
-  servicos  VeiculoServico[]
+  id            Int         @id @default(autoincrement())
+  placa         String      @unique
+  tipoVeiculoId Int
+  TipoVeiculo   TipoVeiculo @relation(fields: [tipoVeiculoId], references: [id])
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  servicos      Agenda[]
 }
 
 model Servico {
-  id        Int               @id @default(autoincrement())
-  nome      String
-  descricao String?
-  valor     Float
-  veiculos  VeiculoServico[]
+  id           Int            @id @default(autoincrement())
+  nome         String
+  descricao    String?
+  veiculos     Agenda[]
+  servicoValor ServicoValor[]
 }
 
-model VeiculoServico {
-  veiculoId   Int
-  servicoId   Int
-  veiculo     Veiculo    @relation(fields: [veiculoId], references: [id])
-  servico     Servico    @relation(fields: [servicoId], references: [id])
-  dataInicio  DateTime
-  dataFim     DateTime?
+model Agenda {
+  id         String    @id @default(uuid())
+  veiculoId  Int
+  servicoId  Int
+  veiculo    Veiculo   @relation(fields: [veiculoId], references: [id])
+  servico    Servico   @relation(fields: [servicoId], references: [id])
+  dataInicio DateTime
+  dataFim    DateTime?
 
-  @@id([veiculoId, servicoId, dataInicio])
+  @@map("veiculos_servicos")
 }
 
-enum TiposVeiculos {
+model ServicoValor {
+  id            Int         @id @default(autoincrement())
+  valor         Float
+  servicoId     Int
+  tipoVeiculoId Int
+  servico       Servico     @relation(fields: [servicoId], references: [id])
+  tipoVeiculo   TipoVeiculo @relation(fields: [tipoVeiculoId], references: [id])
+}
+
+model TipoVeiculo {
+  id           Int               @id @default(autoincrement())
+  nome         TiposVeiculosEnum
+  veiculo      Veiculo[]
+  servicoValor ServicoValor[]
+}
+
+enum TiposVeiculosEnum {
   carro
   moto
   caminhao
