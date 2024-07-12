@@ -57,7 +57,7 @@ async function main(ws: WebSocket) {
     agendamento = new Date(agendamento).valueOf() + horasEntreServicos * 60 * 60 * 1000;
 
     i -= 1;
-  }, 10000);
+  }, 5000);
 }
 
 export default main;
