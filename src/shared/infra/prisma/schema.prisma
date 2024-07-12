@@ -42,19 +42,19 @@ model Agenda {
   servicoId  Int
   veiculo    Veiculo   @relation(fields: [veiculoId], references: [id])
   servico    Servico   @relation(fields: [servicoId], references: [id])
-  dataInicio DateTime
+  dataInicio DateTime? @default(now())
   dataFim    DateTime?
 
   @@map("veiculos_servicos")
 }
 
 model ServicoValor {
-  id            Int         @id @default(autoincrement())
-  valor         Float
-  servicoId     Int
-  tipoVeiculoId Int
-  servico       Servico     @relation(fields: [servicoId], references: [id])
-  tipoVeiculo   TipoVeiculo @relation(fields: [tipoVeiculoId], references: [id])
+  id             Int         @id @default(autoincrement())
+  valor          Float
+  tipoVeiculoId  Int
+  servicoValorId Int
+  servico        Servico     @relation(fields: [servicoValorId], references: [id])
+  tipoVeiculo    TipoVeiculo @relation(fields: [tipoVeiculoId], references: [id])
 }
 
 model TipoVeiculo {
