@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 
-import websocket from '@/shared/core/server';
-
 import UpdateServicoService from '@/modules/agenda/services/updateServicoService';
 import AddServicosService from '@/modules/agenda/services/addServicos';
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
@@ -32,14 +30,8 @@ export default class ServicoVeiculoController {
   }
 
   async addServico(request: Request, response: Response) {
-    const { idVeiculo, idServico, data } = request.body;
-
     this.rabbitmqService.publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, request.body);
 
-    const agenda = await this.addServicoService.add(idVeiculo, idServico);
-
-    websocket.broadcast('agenda:agendados', agenda);
-
-    return response.status(200).json({ agenda });
+    return response.status(200);
   }
 }
