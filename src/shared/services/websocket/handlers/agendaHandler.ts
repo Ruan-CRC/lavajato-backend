@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { WebSocket } from 'ws';
 
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
@@ -10,11 +9,12 @@ const repositorie = new VeiculoServicosRepository();
 const servicosAgendados = new ServicosAgendados(repositorie);
 const agendaController = new AgendaController(servicosAgendados);
 
-export default function agendaHandler(ws: WebSocket, req: Request) {
+export default function agendaHandler(ws: WebSocket) {
   ws.on('message', (message: string) => {
+    console.log('Message received', message);
     switch (JSON.parse(message)) {
       case 'agenda:join':
-        agendaController.enviarAgendas(ws, req);
+        agendaController.enviarAgendas(ws);
         break;
 
       case 'agenda:seed':

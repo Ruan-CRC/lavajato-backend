@@ -37,6 +37,7 @@
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.97.20",
     "@types/bcryptjs": "^2.4.6",
+    "@types/amqplib": "^0.10.5",
     "@types/jest": "^29.5.12",
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
