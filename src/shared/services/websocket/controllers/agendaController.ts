@@ -18,7 +18,7 @@ class AgendaController {
     }
   };
 
-  enviarAgendas = async (ws: WebSocket) => {
+  enviarAgendas = async (ws: WebSocket, req: Request) => {
     try {
       console.log('Enviando agendas');
       const result = await this.servicosAgendados.servicosAgendados();

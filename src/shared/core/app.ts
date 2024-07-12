@@ -1,5 +1,7 @@
 // Modules Imports
 import express, { Request, Response } from 'express';
+import { createServer, Server as HTTPServer } from 'node:http';
+import { WebSocketServer, WebSocket } from 'ws';
 
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -9,6 +11,8 @@ import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculoRouters
 import servicosRouters from '@/modules/servicos/infra/http/routers/servicosRouters';
 import servicoVeiculoRouters from '@/modules/agenda/infra/http/routers/servicoVeiculo.router';
 
+import agendaHandler from '@/shared/services/websocket/handlers/agendaHandler';
+
 // Dotenv Config
 dotenv.config();
 
@@ -17,14 +21,21 @@ const corsOptions = {
 };
 
 class App {
+  public server: HTTPServer;
+
   public app: express.Application;
+
+  public wss: WebSocketServer;
 
   constructor() {
     this.app = express();
+    this.server = createServer(this.app);
+    this.wss = new WebSocketServer({ server: this.server });
 
     this.connection();
     this.middlewares();
     this.routes();
+    this.webSocketEvents();
   }
 
   async connection() {
@@ -47,8 +58,12 @@ class App {
     this.app.use('/api/v1/agenda', servicoVeiculoRouters);
   }
 
+  webSocketEvents() {
+    this.wss.on('connection', (ws: WebSocket, req: Request) => agendaHandler(ws, req));
+  }
+
   start(port: String) {
-    this.app.listen(port, () => {
+    this.server.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
   }
