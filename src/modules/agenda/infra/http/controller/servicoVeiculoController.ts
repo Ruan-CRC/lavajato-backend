@@ -39,5 +39,7 @@ export default class ServicoVeiculoController {
     const agenda = await this.addServicoService.add(idVeiculo, idServico);
 
     websocket.broadcast('agenda:agendados', agenda);
+
+    return response.status(200).json({ agenda });
   }
 }

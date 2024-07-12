@@ -46,13 +46,7 @@ class App {
     this.app.use('/api/v1/servicos', servicosRouters);
     this.app.use('/api/v1/agenda', servicoVeiculoRouters);
   }
-
-  start(port: String) {
-    this.app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
-  }
 }
 
-const app = new App();
+const { app } = new App();
 export default app;
