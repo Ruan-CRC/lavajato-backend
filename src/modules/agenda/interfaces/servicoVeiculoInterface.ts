@@ -1,9 +1,9 @@
-import { VeiculoServico } from '@prisma/client';
+import { Agenda } from '@prisma/client';
 
 export interface ServicoVeiculoInterface {
   updateServico(
-    idVeiculo: number, idServico: number, dataInicio: string, dataFim?: string
-  ): Promise<VeiculoServico>
-  addServicos(idVeiculo: number, idServico: number): Promise<VeiculoServico>
-  getServicosEmAgendamento(): Promise<VeiculoServico[]>
+    idServico: string, dataInicio?: string, dataFim?: string
+  ): Promise<Agenda>
+  addServicos(idVeiculo: number, idServico: number, dataInicio?: string): Promise<Agenda>
+  getServicosEmAgendamento(): Promise<Agenda[]>
 }

@@ -1,12 +1,12 @@
-import { VeiculoServico } from '@prisma/client';
+import { Agenda } from '@prisma/client';
 import { ServicoVeiculoInterface } from '../../interfaces/servicoVeiculoInterface';
 import prisma from '@/shared/infra/prisma/prisma';
 
 export default class VeiculoServicosRepository implements ServicoVeiculoInterface {
   async getServicosEmAgendamento(): Promise<{
-    veiculoId: number; servicoId: number; dataInicio: Date; dataFim: Date | null;
+    id: string; veiculoId: number; servicoId: number; dataInicio: Date; dataFim: Date | null;
   }[]> {
-    const servicosEmAgendamento = await prisma.veiculoServico.findMany({
+    const servicosEmAgendamento = await prisma.agenda.findMany({
       where: {
         dataFim: null,
       },
@@ -15,18 +15,13 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
   }
 
   async updateServico(
-    idVeiculo: number,
-    idServico: number,
-    dataInicio: string,
+    idServico: string,
+    dataInicio?: string,
     dataFim?: string,
-  ): Promise<VeiculoServico> {
-    const servico = await prisma.veiculoServico.update({
+  ): Promise<Agenda> {
+    const servico = await prisma.agenda.update({
       where: {
-        veiculoId_servicoId_dataInicio: {
-          veiculoId: idVeiculo,
-          servicoId: idServico,
-          dataInicio,
-        },
+        id: idServico,
       },
       data: {
         dataInicio,
@@ -35,6 +30,7 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
     });
 
     return {
+      id: servico.id,
       veiculoId: servico.veiculoId,
       servicoId: servico.servicoId,
       dataInicio: servico.dataInicio,
@@ -42,12 +38,12 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
     };
   }
 
-  async addServicos(veiculoId: number, servicoId: number): Promise<any> {
-    const agenda = await prisma.veiculoServico.create({
+  async addServicos(veiculoId: number, servicoId: number, dataInicio?: string): Promise<any> {
+    const agenda = await prisma.agenda.create({
       data: {
         veiculoId,
         servicoId,
-        dataInicio: new Date(),
+        dataInicio: dataInicio || new Date(),
       },
     });
 

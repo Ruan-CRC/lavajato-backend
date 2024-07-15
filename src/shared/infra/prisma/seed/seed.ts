@@ -15,7 +15,7 @@ async function associateServiceToVehicle(ws: WebSocket, data: Date = new Date())
     const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
     const randomVeiculo = veiculos[Math.floor(Math.random() * veiculos.length)];
 
-    const payload = await prisma.veiculoServico.create({
+    const payload = await prisma.agenda.create({
       data: {
         veiculoId: randomVeiculo.id,
         servicoId: randomServico.id,
@@ -57,7 +57,7 @@ async function main(ws: WebSocket) {
     agendamento = new Date(agendamento).valueOf() + horasEntreServicos * 60 * 60 * 1000;
 
     i -= 1;
-  }, 10000);
+  }, 5000);
 }
 
 export default main;
