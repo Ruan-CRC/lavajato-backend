@@ -1,28 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Request } from 'express';
-import { WebSocket } from 'ws';
+/* eslint-disable max-len */
+import { Socket } from 'socket.io';
 
-import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
+// import { Agenda } from '@prisma/client';
+import ServicosAgendados from '../../../../modules/agenda/services/servicosAgendados';
+// import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
 
+import { amqpInstance } from '@/shared/core/server';
+
+// const veiculoServicosRepository = new VeiculoServicosRepository();
 class AgendaController {
-  constructor(
-    private servicosAgendados: ServicosAgendados,
-  ) { }
+  constructor(private servicosAgendados: ServicosAgendados) { }
 
-  createAgenda = async (ws: WebSocket, req: Request) => {
+  createAgenda = async (socket: Socket, payload: any) => {
+    // let result: Agenda;
     try {
-      const result = 'Nenhum serviço agendado';
-      console.log(result);
+      amqpInstance.publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, payload);
     } catch (error) {
-      console.log(error);
+      console.error({ status: 'error', error });
     }
   };
 
-  enviarAgendas = async (ws: WebSocket) => {
+  enviarAgendas = async (socket: Socket) => {
     try {
       const result = await this.servicosAgendados.servicosAgendados();
 
-      ws.send(JSON.stringify({ event: 'agenda:all', result }));
+      socket.emit('agenda:all', result);
     } catch (error) {
       console.log(error);
     }
