@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Veiculo, TiposVeiculos } from '@prisma/client';
+import { Veiculo, TipoVeiculo } from '@prisma/client';
 import prisma from '../../../../shared/infra/prisma/prisma';
 import { VeiculoInterface } from '../../interfaces/veiculoInterface';
 
 interface VeiculoInput {
   placa: string;
-  tipo: TiposVeiculos
+  tipo: TipoVeiculo
   user: number
 }
 
 export default class VeiculoRepository implements VeiculoInterface {
   async all(): Promise<any> {
-    const veiculos = await prisma.veiculo.findMany();
+    const veiculos = await prisma.tipoVeiculo.findMany();
 
     return veiculos;
   }
@@ -39,7 +39,7 @@ export default class VeiculoRepository implements VeiculoInterface {
     const veiculo = await prisma.veiculo.create({
       data: {
         placa: data.placa,
-        tipo: data.tipo,
+        TipoVeiculo: { connect: { id: data.tipo.id } },
         user: { connect: { id: data.user } },
       },
     });

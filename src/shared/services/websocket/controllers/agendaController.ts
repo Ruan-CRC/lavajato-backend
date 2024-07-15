@@ -20,9 +20,9 @@ class AgendaController {
 
   enviarAgendas = async (ws: WebSocket) => {
     try {
-      console.log('Enviando agendas');
       const result = await this.servicosAgendados.servicosAgendados();
-      ws.send(JSON.stringify({ event: 'agenda:agendados', result }));
+
+      ws.send(JSON.stringify({ event: 'agenda:all', result }));
     } catch (error) {
       console.log(error);
     }

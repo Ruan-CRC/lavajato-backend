@@ -3,14 +3,24 @@ import * as amqp from 'amqplib';
 import AmqpInterface from './amqpInterface';
 
 class AmqpLibService implements AmqpInterface {
+  private static instance: AmqpLibService;
+
   private connection: amqp.Connection;
 
   private channel: amqp.Channel;
 
-  constructor() {
+  private constructor() {
     if (!process.env.AMQP_LIB_URL) {
       throw new Error('AMQP_LIB_URL is not defined in .env file.');
     }
+  }
+
+  public static get Instance(): AmqpLibService {
+    if (!AmqpLibService.instance) {
+      AmqpLibService.instance = new AmqpLibService();
+    }
+
+    return AmqpLibService.instance;
   }
 
   async connect() {
@@ -20,21 +30,22 @@ class AmqpLibService implements AmqpInterface {
     }
   }
 
-  async publishInQueue(queue: string, message: string) {
-    await this.connect();
+  async publishInQueue(queue: string, message: any): Promise<boolean> {
+    console.log('Publishing message:', queue, message);
     await this.channel.assertQueue(queue, { durable: true });
-    this.channel.sendToQueue(queue, Buffer.from(message));
+    this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
     // Opcional: Fechar a conexão se necessário
     // this.close();
+
+    return true;
   }
 
   async consumeFromQueue(queue: string, callback: (message: string) => void) {
-    await this.connect();
     await this.channel.assertQueue(queue, { durable: true });
+
     this.channel.consume(queue, (message) => {
       if (message !== null) {
-        console.log('Received message:', message.content.toString());
-        callback(message.content.toString());
+        callback(JSON.parse(message.content.toString()));
         this.channel.ack(message);
       }
     });

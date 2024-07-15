@@ -11,9 +11,8 @@ const agendaController = new AgendaController(servicosAgendados);
 
 export default function agendaHandler(ws: WebSocket) {
   ws.on('message', (message: string) => {
-    console.log('Message received', message);
     switch (JSON.parse(message)) {
-      case 'agenda:join':
+      case 'agenda:all':
         agendaController.enviarAgendas(ws);
         break;
 
