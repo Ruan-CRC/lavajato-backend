@@ -4,6 +4,8 @@ import UpdateServicoService from '@/modules/agenda/services/updateServicoService
 import AddServicosService from '@/modules/agenda/services/addServicos';
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
 
+import { amqpInstance } from '@/shared/core/server';
+
 export default class ServicoVeiculoController {
   constructor(
     private updateServico: UpdateServicoService,
@@ -27,15 +29,14 @@ export default class ServicoVeiculoController {
     return response.status(200).json({ servico });
   }
 
-  async addServico(req: Request, res: Response) {
-    const { veiculoId, servicoId } = req.body;
+  async addServico(request: Request, response: Response) {
+    const isPublished = await amqpInstance
+      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, request.body);
 
-    try {
-      const servico = await this.addServicoService.add(veiculoId, servicoId);
-
-      return res.status(201).json({ message: 'Serviço adicionado com sucesso!', servico });
-    } catch (err) {
-      return res.status(404).json({ error: (err as Error).message });
+    if (!isPublished) {
+      return response.status(400);
     }
+
+    return response.status(200).json({ message: 'Serviço adicionado com sucesso!' });
   }
 }

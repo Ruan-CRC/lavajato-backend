@@ -38,12 +38,12 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
     };
   }
 
-  async addServicos(veiculoId: number, servicoId: number): Promise<any> {
+  async addServicos(veiculoId: number, servicoId: number, dataInicio?: string): Promise<any> {
     const agenda = await prisma.agenda.create({
       data: {
         veiculoId,
         servicoId,
-        dataInicio: new Date(),
+        dataInicio: dataInicio || new Date(),
       },
     });
 
