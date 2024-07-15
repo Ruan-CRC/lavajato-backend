@@ -1,4 +1,3 @@
-// src/shared/services/rabbitMQ/amqpLibService.ts
 import * as amqp from 'amqplib';
 import AmqpInterface from './amqpInterface';
 
@@ -44,7 +43,7 @@ class AmqpLibService implements AmqpInterface {
 
     this.channel.consume(queue, (message) => {
       if (message !== null) {
-        callback(JSON.parse(message.content.toString()));
+        callback(message.content.toString());
         this.channel.ack(message);
       }
     });
