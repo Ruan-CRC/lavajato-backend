@@ -1,4 +1,3 @@
-// src/shared/services/rabbitMQ/amqpLibService.ts
 import * as amqp from 'amqplib';
 import AmqpInterface from './amqpInterface';
 
@@ -40,11 +39,9 @@ class AmqpLibService implements AmqpInterface {
   }
 
   async consumeFromQueue(queue: string, callback: (message: string) => void) {
-    console.log('Consuming from queue:', queue);
     await this.channel.assertQueue(queue, { durable: true });
 
     this.channel.consume(queue, (message) => {
-      console.log('Message received:', message.content.toString(), message);
       if (message !== null) {
         callback(message.content.toString());
         this.channel.ack(message);

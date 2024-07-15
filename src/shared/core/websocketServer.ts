@@ -6,7 +6,7 @@ class WebsocketServer {
 
   private io: Server;
 
-  socketInstance: Socket;
+  private socketInstance: Socket;
 
   private constructor() {
     const ioServer = new Server(Number(process.env.PORT_WS_SERVER), {

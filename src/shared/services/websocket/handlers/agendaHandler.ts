@@ -11,5 +11,5 @@ const agendaController = new AgendaController(servicosAgendados);
 
 export default function agendaHandler(io: Server, socket: Socket) {
   socket.on('agenda:all', async () => { await agendaController.enviarAgendas(socket); });
-  socket.on('agenda:create', () => { agendaController.createAgenda(socket); });
+  socket.on('agenda:create', (payload) => { agendaController.createAgenda(socket, payload); });
 }

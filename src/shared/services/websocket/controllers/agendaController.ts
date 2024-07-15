@@ -1,24 +1,20 @@
+/* eslint-disable max-len */
 import { Socket } from 'socket.io';
 
-import { Agenda } from '@prisma/client';
+// import { Agenda } from '@prisma/client';
 import ServicosAgendados from '../../../../modules/agenda/services/servicosAgendados';
-import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
+// import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
 
 import { amqpInstance } from '@/shared/core/server';
 
-const veiculoServicosRepository = new VeiculoServicosRepository();
-// agendaController.ts
+// const veiculoServicosRepository = new VeiculoServicosRepository();
 class AgendaController {
   constructor(private servicosAgendados: ServicosAgendados) { }
 
-  createAgenda = async (socket: Socket) => {
-    let result: Agenda;
+  createAgenda = async (socket: Socket, payload: any) => {
+    // let result: Agenda;
     try {
-      await amqpInstance.consumeFromQueue(process.env.RABBITMQ_AGENDA_QUEUE, async (payload) => {
-        console.log('payload=-=-=-=-', payload);
-        result = await veiculoServicosRepository.addServicos(1, 1);
-        socket.emit('agenda:create', result);
-      });
+      amqpInstance.publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, payload);
     } catch (error) {
       console.error({ status: 'error', error });
     }
