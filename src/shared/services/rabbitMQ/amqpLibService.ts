@@ -31,7 +31,6 @@ class AmqpLibService implements AmqpInterface {
   }
 
   async publishInQueue(queue: string, message: any): Promise<boolean> {
-    console.log('Publishing message:', queue, message);
     await this.channel.assertQueue(queue, { durable: true });
     this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
     // Opcional: Fechar a conexão se necessário

@@ -36,7 +36,11 @@ class WsServer {
   }
 
   broadcast(event: string, data: any) {
-    this.ws.send(JSON.stringify({ event, data }));
+    this.wsServer.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ event, data }));
+      }
+    });
   }
 }
 

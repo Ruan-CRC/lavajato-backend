@@ -18,7 +18,6 @@ app.listen(porta, async () => {
 
   websocketInstance.start();
   await amqpInstance.connect();
-  websocketInstance.start();
 
   amqpInstance.consumeFromQueue(process.env.RABBITMQ_AGENDA_QUEUE, (payload) => {
     veiculoServicosRepository.addServicos(1, 1);
