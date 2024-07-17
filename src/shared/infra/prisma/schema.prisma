@@ -39,10 +39,10 @@ model Servico {
 model Agenda {
   id         String    @id @default(uuid())
   veiculoId  Int
-  servicoId  Int
+  servicoId  Int[]
   veiculo    Veiculo   @relation(fields: [veiculoId], references: [id])
   servico    Servico   @relation(fields: [servicoId], references: [id])
-  dataInicio DateTime? @default(now())
+  dataInicio DateTime? @unique
   dataFim    DateTime?
 
   @@map("veiculos_servicos")

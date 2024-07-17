@@ -2,13 +2,24 @@ import { Agenda } from '@prisma/client';
 import { ServicoVeiculoInterface } from '../../interfaces/servicoVeiculoInterface';
 import prisma from '@/shared/infra/prisma/prisma';
 
+import getStartOfToday from '@/shared/infra/helpers/zeroHoursToday';
+import { CreateInputDTO } from '../../DTOs/createDTO';
+
 export default class VeiculoServicosRepository implements ServicoVeiculoInterface {
   async getServicosEmAgendamento(): Promise<{
-    id: string; veiculoId: number; servicoId: number; dataInicio: Date; dataFim: Date | null;
+    id: string;
+    veiculoId: number;
+    servicoId: number;
+    dataInicio: Date;
+    dataFim: Date | null;
   }[]> {
+    const zeroHoursToday = getStartOfToday();
+
     const servicosEmAgendamento = await prisma.agenda.findMany({
       where: {
-        dataFim: null,
+        dataInicio: {
+          gte: zeroHoursToday,
+        },
       },
     });
     return servicosEmAgendamento;
@@ -38,12 +49,14 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
     };
   }
 
-  async addServicos(veiculoId: number, servicoId: number, dataInicio?: string): Promise<any> {
+  async addServicos(props: CreateInputDTO): Promise<any> {
+    const { veiculoId, servicoId, dataInicio } = props;
+
     const agenda = await prisma.agenda.create({
       data: {
         veiculoId,
         servicoId,
-        dataInicio: dataInicio || new Date(),
+        dataInicio,
       },
     });
 
