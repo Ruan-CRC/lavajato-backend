@@ -10,10 +10,12 @@ class Agenda {
 
   private create(props: AgendaInput): AgendaOutput | string {
     const HORARIO_INICIO = 8;
-    const HORAIO_FIM = 18;
+    const HORARIO_FIM = 18;
     const { dataInicio } = props;
 
-    if ((dataInicio.getHours() < HORARIO_INICIO) || (dataInicio.getHours() > HORAIO_FIM)) return 'Horário fora do expediente';
+    const HORA_AGENDA = new Date(dataInicio).getHours();
+
+    if ((HORA_AGENDA < HORARIO_INICIO) || (HORA_AGENDA > HORARIO_FIM)) return 'Horário fora do expediente';
 
     this.props.id = randomUUID();
     this.props.servicoId = props.servicoId;

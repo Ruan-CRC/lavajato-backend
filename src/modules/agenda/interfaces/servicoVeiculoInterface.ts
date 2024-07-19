@@ -1,10 +1,9 @@
-import { Agenda } from '@prisma/client';
-import { CreateInputDTO } from '../DTOs/createDTO';
+import { CreateInputDTO, CreateOutputDTO } from '../DTOs/createDTO';
 
 export interface ServicoVeiculoInterface {
   updateServico(
     idServico: string, dataInicio?: string, dataFim?: string
-  ): Promise<Agenda>
-  addServicos(props: CreateInputDTO): Promise<Agenda>
-  getServicosEmAgendamento(): Promise<Agenda[]>
+  ): Promise<CreateOutputDTO>
+  addServicos(props: CreateInputDTO): Promise<CreateOutputDTO>
+  getServicosEmAgendamento(): Promise<CreateOutputDTO[]>
 }

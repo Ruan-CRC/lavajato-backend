@@ -52,7 +52,69 @@
           "maxLength": null
         },
         {
-          "id": "public.Servico.valor",
+          "name": "ServicoValor",
+          "type": "ServicoValor",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "ServicoValorToServico",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "_AgendaToServico",
+          "type": "_AgendaToServico",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "_AgendaToServicoToServico",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "Servico_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "ServicoValor": {
+      "id": "public.ServicoValor",
+      "schemaName": "public",
+      "tableName": "ServicoValor",
+      "fields": [
+        {
+          "id": "public.ServicoValor.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"public\".\"ServicoValor_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.ServicoValor.valor",
           "name": "valor",
           "columnName": "valor",
           "type": "float8",
@@ -66,11 +128,137 @@
           "maxLength": null
         },
         {
-          "name": "VeiculoServico",
-          "type": "VeiculoServico",
+          "id": "public.ServicoValor.tipoVeiculoId",
+          "name": "tipoVeiculoId",
+          "columnName": "tipoVeiculoId",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.ServicoValor.servicoValorId",
+          "name": "servicoValorId",
+          "columnName": "servicoValorId",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "Servico",
+          "type": "Servico",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "ServicoValorToServico",
+          "relationFromFields": [
+            "servicoValorId"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "TipoVeiculo",
+          "type": "TipoVeiculo",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "ServicoValorToTipoVeiculo",
+          "relationFromFields": [
+            "tipoVeiculoId"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "ServicoValor_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "TipoVeiculo": {
+      "id": "public.TipoVeiculo",
+      "schemaName": "public",
+      "tableName": "TipoVeiculo",
+      "fields": [
+        {
+          "id": "public.TipoVeiculo.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"public\".\"TipoVeiculo_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.TipoVeiculo.nome",
+          "name": "nome",
+          "columnName": "nome",
+          "type": "TiposVeiculosEnum",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "ServicoValor",
+          "type": "ServicoValor",
           "isRequired": false,
           "kind": "object",
-          "relationName": "VeiculoServicoToServico",
+          "relationName": "ServicoValorToTipoVeiculo",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "Veiculo",
+          "type": "Veiculo",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "VeiculoToTipoVeiculo",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -82,7 +270,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "Servico_pkey",
+          "name": "TipoVeiculo_pkey",
           "fields": [
             "id"
           ],
@@ -288,10 +476,10 @@
           "maxLength": null
         },
         {
-          "id": "public.Veiculo.tipo",
-          "name": "tipo",
-          "columnName": "tipo",
-          "type": "TiposVeiculos",
+          "id": "public.Veiculo.tipoVeiculoId",
+          "name": "tipoVeiculoId",
+          "columnName": "tipoVeiculoId",
+          "type": "int4",
           "isRequired": true,
           "kind": "scalar",
           "isList": false,
@@ -300,6 +488,24 @@
           "hasDefaultValue": false,
           "isId": false,
           "maxLength": null
+        },
+        {
+          "name": "TipoVeiculo",
+          "type": "TipoVeiculo",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "VeiculoToTipoVeiculo",
+          "relationFromFields": [
+            "tipoVeiculoId"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
         },
         {
           "name": "User",
@@ -320,11 +526,11 @@
           "hasDefaultValue": false
         },
         {
-          "name": "VeiculoServico",
-          "type": "VeiculoServico",
+          "name": "veiculos_servicos",
+          "type": "veiculos_servicos",
           "isRequired": false,
           "kind": "object",
-          "relationName": "VeiculoServicoToVeiculo",
+          "relationName": "veiculos_servicosToVeiculo",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -351,15 +557,29 @@
         }
       ]
     },
-    "VeiculoServico": {
-      "id": "public.VeiculoServico",
+    "_AgendaToServico": {
+      "id": "public._AgendaToServico",
       "schemaName": "public",
-      "tableName": "VeiculoServico",
+      "tableName": "_AgendaToServico",
       "fields": [
         {
-          "id": "public.VeiculoServico.veiculoId",
-          "name": "veiculoId",
-          "columnName": "veiculoId",
+          "id": "public._AgendaToServico.A",
+          "name": "A",
+          "columnName": "A",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public._AgendaToServico.B",
+          "name": "B",
+          "columnName": "B",
           "type": "int4",
           "isRequired": true,
           "kind": "scalar",
@@ -368,48 +588,6 @@
           "sequence": false,
           "hasDefaultValue": false,
           "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.VeiculoServico.servicoId",
-          "name": "servicoId",
-          "columnName": "servicoId",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.VeiculoServico.dataInicio",
-          "name": "dataInicio",
-          "columnName": "dataInicio",
-          "type": "timestamp",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.VeiculoServico.dataFim",
-          "name": "dataFim",
-          "columnName": "dataFim",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
           "maxLength": null
         },
         {
@@ -417,9 +595,9 @@
           "type": "Servico",
           "isRequired": true,
           "kind": "object",
-          "relationName": "VeiculoServicoToServico",
+          "relationName": "_AgendaToServicoToServico",
           "relationFromFields": [
-            "servicoId"
+            "B"
           ],
           "relationToFields": [
             "id"
@@ -431,13 +609,13 @@
           "hasDefaultValue": false
         },
         {
-          "name": "Veiculo",
-          "type": "Veiculo",
+          "name": "veiculos_servicos",
+          "type": "veiculos_servicos",
           "isRequired": true,
           "kind": "object",
-          "relationName": "VeiculoServicoToVeiculo",
+          "relationName": "_AgendaToServicoToveiculos_servicos",
           "relationFromFields": [
-            "veiculoId"
+            "A"
           ],
           "relationToFields": [
             "id"
@@ -451,11 +629,10 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "VeiculoServico_pkey",
+          "name": "_AgendaToServico_AB_unique",
           "fields": [
-            "dataInicio",
-            "servicoId",
-            "veiculoId"
+            "A",
+            "B"
           ],
           "nullNotDistinct": false
         }
@@ -588,10 +765,121 @@
           "nullNotDistinct": false
         }
       ]
+    },
+    "veiculos_servicos": {
+      "id": "public.veiculos_servicos",
+      "schemaName": "public",
+      "tableName": "veiculos_servicos",
+      "fields": [
+        {
+          "id": "public.veiculos_servicos.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.veiculos_servicos.veiculoId",
+          "name": "veiculoId",
+          "columnName": "veiculoId",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.veiculos_servicos.dataInicio",
+          "name": "dataInicio",
+          "columnName": "dataInicio",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.veiculos_servicos.dataFim",
+          "name": "dataFim",
+          "columnName": "dataFim",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "Veiculo",
+          "type": "Veiculo",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "veiculos_servicosToVeiculo",
+          "relationFromFields": [
+            "veiculoId"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "_AgendaToServico",
+          "type": "_AgendaToServico",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "_AgendaToServicoToveiculos_servicos",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "veiculos_servicos_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        },
+        {
+          "name": "veiculos_servicos_dataInicio_key",
+          "fields": [
+            "dataInicio"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
     }
   },
   "enums": {
-    "TiposVeiculos": {
+    "TiposVeiculosEnum": {
       "schemaName": "public",
       "values": [
         {

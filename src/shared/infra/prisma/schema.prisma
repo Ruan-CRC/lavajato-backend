@@ -29,20 +29,28 @@ model Veiculo {
 }
 
 model Servico {
-  id           Int            @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   nome         String
   descricao    String?
-  veiculos     Agenda[]
+  servicos     AgendaServico[]
   servicoValor ServicoValor[]
 }
 
+model AgendaServico {
+  agendaId  String
+  agenda    Agenda  @relation(fields: [agendaId], references: [id])
+  servicoId Int
+  servico   Servico @relation(fields: [servicoId], references: [id])
+
+  @@id([agendaId, servicoId])
+}
+
 model Agenda {
-  id         String    @id @default(uuid())
+  id         String          @id @default(uuid())
   veiculoId  Int
-  servicoId  Int[]
-  veiculo    Veiculo   @relation(fields: [veiculoId], references: [id])
-  servico    Servico   @relation(fields: [servicoId], references: [id])
-  dataInicio DateTime? @unique
+  veiculo    Veiculo         @relation(fields: [veiculoId], references: [id])
+  servicos   AgendaServico[]
+  dataInicio DateTime?       @unique
   dataFim    DateTime?
 
   @@map("veiculos_servicos")
