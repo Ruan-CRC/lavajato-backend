@@ -6,7 +6,7 @@
   "main": "index.js",
   "prisma": {
     "schema": "./src/shared/infra/prisma/schema.prisma",
-    "seed": "tsx src/shared/infra/prisma/seed/seed.ts"
+    "seed": "tsx src/shared/infra/prisma/seed/fullData.ts"
   },
   "scripts": {
     "test": "jest",

@@ -3,27 +3,28 @@ import { ServicoVeiculoInterface } from '../../interfaces/servicoVeiculoInterfac
 import prisma from '@/shared/infra/prisma/prisma';
 
 import getStartOfToday from '@/shared/infra/helpers/zeroHoursToday';
-import { CreateInputDTO } from '../../DTOs/createDTO';
-import { connect } from 'amqplib';
+import { CreateInputDTO, CreateOutputDTO } from '../../DTOs/createDTO';
 
 export default class VeiculoServicosRepository implements ServicoVeiculoInterface {
-  async getServicosEmAgendamento(): Promise<{
-    id: string;
-    veiculoId: number;
-    servicoId: number;
-    dataInicio: Date;
-    dataFim: Date | null;
-  }[]> {
+  async getServicosEmAgendamento(): Promise<CreateOutputDTO[]> {
     const zeroHoursToday = getStartOfToday();
 
-    const servicosEmAgendamento = await prisma.agenda.findMany({
+    const agendas = await prisma.agenda.findMany({
+      select: {
+        id: true,
+        veiculoId: true,
+        servicos: true,
+        dataInicio: true,
+        dataFim: true,
+      },
       where: {
         dataInicio: {
           gte: zeroHoursToday,
         },
       },
     });
-    return servicosEmAgendamento;
+
+    return agendas;
   }
 
   async updateServico(
@@ -56,15 +57,10 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
     const agenda = await prisma.agenda.create({
       data: {
         veiculoId,
+        servicoId,
         dataInicio,
-        servicos: {
-          create: {
-            servico: {
-              connect: { id: [3, 5, 7] }
-            }
-          },
-        },
-      });
+      },
+    });
 
     return agenda;
   }
