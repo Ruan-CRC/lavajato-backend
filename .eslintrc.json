@@ -4,7 +4,8 @@
     "airbnb-typescript/base"
   ],
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": "/home/pcworker/lavajato-backend"
   },
   "rules": {
     "no-redeclare": "off",

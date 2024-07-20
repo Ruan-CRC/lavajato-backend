@@ -1,4 +1,5 @@
-import { Prisma } from '@prisma/client';
+import { UUID } from 'node:crypto';
+import { OutputCreateUser } from '../services/createUser/create.d';
 
 export interface UserOutputDTO {
   id: string
@@ -9,7 +10,19 @@ export interface UserOutputDTO {
   endereco?: string
 }
 
+export interface InputCreate {
+  id: UUID;
+  email: string
+  password: string
+  telefone?: string
+  endereco?: string
+  veiculo: {
+    placa: string
+    tipo: number
+  }[]
+}
+
 export interface CreateUserInterface {
   findByEmail(email: string): Promise<UserOutputDTO | boolean>
-  create(data: Prisma.UserCreateInput): Promise<UserOutputDTO>
+  create(data: InputCreate): Promise<OutputCreateUser>
 }
