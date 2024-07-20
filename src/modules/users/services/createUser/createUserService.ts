@@ -5,11 +5,11 @@ import User from '../../entities/user';
 export default class CreateUserService {
   constructor(private usersRepository: CreateUserInterface) { }
 
-  async create({ email, password, veiculo }: InputCreateUser): Promise<OutputCreateUser> {
+  async create({ email, password, veiculos }: InputCreateUser): Promise<OutputCreateUser> {
     const userEntite = new User({
       email,
       password,
-      veiculo,
+      veiculos,
     });
 
     const user = await this.usersRepository.create(userEntite.getEntity());
@@ -19,7 +19,7 @@ export default class CreateUserService {
       email: user.email,
       telefone: user.telefone ?? undefined,
       endereco: user.endereco ?? undefined,
-      veiculo: user.veiculo,
+      veiculos: user.veiculos,
     };
   }
 }

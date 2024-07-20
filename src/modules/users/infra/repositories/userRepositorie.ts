@@ -1,5 +1,4 @@
 import { UUID } from 'node:crypto';
-import { Prisma } from '@prisma/client';
 import prisma from '../../../../shared/infra/prisma/prisma';
 import { CreateUserInterface, UserOutputDTO, InputCreate } from '../../interfaces/createUserInterface';
 import { OutputCreateUser } from '../../services/createUser/create';
@@ -10,12 +9,13 @@ export default class UsersRepository implements CreateUserInterface {
       data: {
         idUser: data.id,
         email: data.email,
+        password: data.password,
         telefone: data.telefone,
         endereco: data.endereco,
         veiculos: {
           create: {
-            placa: data.veiculo[0].placa,
-            tipoVeiculoId: data.veiculo[0].tipo,
+            placa: data.veiculos[0].placa,
+            tipoVeiculoId: data.veiculos[0].tipo,
           },
         },
       },
@@ -32,8 +32,11 @@ export default class UsersRepository implements CreateUserInterface {
       email: user.email,
       telefone: user.telefone ?? undefined,
       endereco: user.endereco ?? undefined,
-      veiculo: user.
-    }
+      veiculos: veiculos.map((veiculo) => ({
+        placa: veiculo.placa,
+        tipo: veiculo.tipoVeiculoId,
+      })),
+    };
   }
 
   async findByEmail(email: string): Promise<UserOutputDTO | boolean> {
@@ -50,7 +53,6 @@ export default class UsersRepository implements CreateUserInterface {
     return {
       id: user.id.toString(),
       idUser: user.idUser,
-      name: user.name,
       email: user.email,
       telefone: user.telefone ?? undefined,
       endereco: user.endereco ?? undefined,

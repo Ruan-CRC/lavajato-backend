@@ -4,7 +4,6 @@ import { OutputCreateUser } from '../services/createUser/create.d';
 export interface UserOutputDTO {
   id: string
   idUser: string
-  name: string
   email: string
   telefone?: string
   endereco?: string
@@ -16,7 +15,7 @@ export interface InputCreate {
   password: string
   telefone?: string
   endereco?: string
-  veiculo: {
+  veiculos: {
     placa: string
     tipo: number
   }[]

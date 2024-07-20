@@ -5,7 +5,7 @@ export interface OutputCreateUser {
   email: string;
   telefone?: string
   endereco?: string
-  veiculo: {
+  veiculos: {
     placa: string;
     tipo: number;
   }[];
@@ -15,7 +15,7 @@ export interface InputCreateUser {
   password: string;
   telefone?: string
   endereco?: string
-  veiculo: {
+  veiculos: {
     placa: string;
     tipo: number;
   }[];

@@ -15,7 +15,7 @@ class User {
   }
 
   private async validateAndInitialize(props: UserCreateInput): Promise<void> {
-    if (props.veiculo.length === 0) {
+    if (props.veiculos.length === 0) {
       throw new Error('Pelo menos um veículo é necessário');
     }
 
@@ -52,7 +52,7 @@ class User {
       password: this.props.password,
       telefone: this.props.telefone,
       endereco: this.props.endereco,
-      veiculo: this.props.veiculo,
+      veiculos: this.props.veiculos,
     };
   }
 }

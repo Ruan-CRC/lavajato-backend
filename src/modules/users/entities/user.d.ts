@@ -5,7 +5,7 @@ export interface UserCreateInput {
   password: string;
   telefone?: string;
   endereco?: string;
-  veiculo: {
+  veiculos: {
     placa: string;
     tipo: number;
   }[];
@@ -17,7 +17,7 @@ export interface UserCreateOutput {
   password: string;
   telefone?: string;
   endereco?: string;
-  veiculo: {
+  veiculos: {
     placa: string;
     tipo: number;
   }[];
