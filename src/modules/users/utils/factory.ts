@@ -1,5 +1,5 @@
 import UserController from '../infra/http/controllers/userController';
-import CreateUserService from '../services/createUserService';
+import CreateUserService from '../services/createUser/createUserService';
 import UsersRepository from '@/modules/users/infra/repositories/userRepositorie';
 
 export default class UserFactory {
