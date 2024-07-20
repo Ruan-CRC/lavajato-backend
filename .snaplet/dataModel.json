@@ -52,11 +52,25 @@
           "maxLength": null
         },
         {
-          "name": "ServicoValor",
-          "type": "ServicoValor",
+          "id": "public.Servico.agendaId",
+          "name": "agendaId",
+          "columnName": "agendaId",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "ServicoMetadados",
+          "type": "ServicoMetadados",
           "isRequired": false,
           "kind": "object",
-          "relationName": "ServicoValorToServico",
+          "relationName": "ServicoMetadadosToServico",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -90,13 +104,13 @@
         }
       ]
     },
-    "ServicoValor": {
-      "id": "public.ServicoValor",
+    "ServicoMetadados": {
+      "id": "public.ServicoMetadados",
       "schemaName": "public",
-      "tableName": "ServicoValor",
+      "tableName": "ServicoMetadados",
       "fields": [
         {
-          "id": "public.ServicoValor.id",
+          "id": "public.ServicoMetadados.id",
           "name": "id",
           "columnName": "id",
           "type": "int4",
@@ -105,7 +119,7 @@
           "isList": false,
           "isGenerated": false,
           "sequence": {
-            "identifier": "\"public\".\"ServicoValor_id_seq\"",
+            "identifier": "\"public\".\"ServicoMetadados_id_seq\"",
             "increment": 1,
             "start": 1
           },
@@ -114,7 +128,7 @@
           "maxLength": null
         },
         {
-          "id": "public.ServicoValor.valor",
+          "id": "public.ServicoMetadados.valor",
           "name": "valor",
           "columnName": "valor",
           "type": "float8",
@@ -128,7 +142,21 @@
           "maxLength": null
         },
         {
-          "id": "public.ServicoValor.tipoVeiculoId",
+          "id": "public.ServicoMetadados.tempo",
+          "name": "tempo",
+          "columnName": "tempo",
+          "type": "timestamp",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.ServicoMetadados.tipoVeiculoId",
           "name": "tipoVeiculoId",
           "columnName": "tipoVeiculoId",
           "type": "int4",
@@ -142,7 +170,7 @@
           "maxLength": null
         },
         {
-          "id": "public.ServicoValor.servicoValorId",
+          "id": "public.ServicoMetadados.servicoValorId",
           "name": "servicoValorId",
           "columnName": "servicoValorId",
           "type": "int4",
@@ -160,7 +188,7 @@
           "type": "Servico",
           "isRequired": true,
           "kind": "object",
-          "relationName": "ServicoValorToServico",
+          "relationName": "ServicoMetadadosToServico",
           "relationFromFields": [
             "servicoValorId"
           ],
@@ -178,7 +206,7 @@
           "type": "TipoVeiculo",
           "isRequired": true,
           "kind": "object",
-          "relationName": "ServicoValorToTipoVeiculo",
+          "relationName": "ServicoMetadadosToTipoVeiculo",
           "relationFromFields": [
             "tipoVeiculoId"
           ],
@@ -194,7 +222,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "ServicoValor_pkey",
+          "name": "ServicoMetadados_pkey",
           "fields": [
             "id"
           ],
@@ -240,11 +268,11 @@
           "maxLength": null
         },
         {
-          "name": "ServicoValor",
-          "type": "ServicoValor",
+          "name": "ServicoMetadados",
+          "type": "ServicoMetadados",
           "isRequired": false,
           "kind": "object",
-          "relationName": "ServicoValorToTipoVeiculo",
+          "relationName": "ServicoMetadadosToTipoVeiculo",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -273,6 +301,13 @@
           "name": "TipoVeiculo_pkey",
           "fields": [
             "id"
+          ],
+          "nullNotDistinct": false
+        },
+        {
+          "name": "TipoVeiculo_nome_key",
+          "fields": [
+            "nome"
           ],
           "nullNotDistinct": false
         }
@@ -804,7 +839,7 @@
           "name": "dataInicio",
           "columnName": "dataInicio",
           "type": "timestamp",
-          "isRequired": false,
+          "isRequired": true,
           "kind": "scalar",
           "isList": false,
           "isGenerated": false,
@@ -818,7 +853,7 @@
           "name": "dataFim",
           "columnName": "dataFim",
           "type": "timestamp",
-          "isRequired": false,
+          "isRequired": true,
           "kind": "scalar",
           "isList": false,
           "isGenerated": false,

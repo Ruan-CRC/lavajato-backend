@@ -29,12 +29,12 @@ model Veiculo {
 }
 
 model Servico {
-  id           Int            @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   nome         String
   descricao    String?
-  servicoValor ServicoValor[]
+  servicoValor ServicoMetadados[]
   agendaId     String
-  agendas      Agenda         @relation(fields: [agendaId], references: [id])
+  agendas      Agenda[]
 }
 
 model Agenda {
@@ -48,9 +48,10 @@ model Agenda {
   @@map("veiculos_servicos")
 }
 
-model ServicoValor {
+model ServicoMetadados {
   id             Int         @id @default(autoincrement())
   valor          Float
+  tempo          Int
   tipoVeiculoId  Int
   servicoValorId Int
   servico        Servico     @relation(fields: [servicoValorId], references: [id])
@@ -58,10 +59,10 @@ model ServicoValor {
 }
 
 model TipoVeiculo {
-  id           Int               @id @default(autoincrement())
-  nome         TiposVeiculosEnum
+  id           Int                @id @default(autoincrement())
+  nome         TiposVeiculosEnum  @unique
   veiculo      Veiculo[]
-  servicoValor ServicoValor[]
+  servicoValor ServicoMetadados[]
 }
 
 enum TiposVeiculosEnum {

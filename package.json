@@ -27,6 +27,7 @@
     "amqplib": "^0.10.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.12",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "socket.io": "^4.7.5",
@@ -36,8 +37,8 @@
   "devDependencies": {
     "@snaplet/copycat": "^5.0.0",
     "@snaplet/seed": "^0.97.20",
-    "@types/bcryptjs": "^2.4.6",
     "@types/amqplib": "^0.10.5",
+    "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.12",
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^7.7.1",

@@ -1,14 +1,11 @@
-import { UUID } from 'node:crypto';
-
-export interface AgendaInput {
+export interface CreateInputDTO {
   veiculoId: number;
   servicoIds: number[];
   dataInicio: Date;
-  dataFim: Date;
 }
 
-export interface AgendaOutput {
-  id: UUID;
+export interface CreateOutputDTO {
+  id: string;
   veiculoId: number;
   servicoIds: number[];
   dataInicio: Date;

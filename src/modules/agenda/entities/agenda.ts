@@ -1,45 +1,39 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID, UUID } from 'node:crypto';
 import { AgendaInput, AgendaOutput } from './agenda.d';
 
 class Agenda {
-  constructor(
-    private props: AgendaInput,
-  ) {
-    this.create(props);
+  private id: UUID;
+
+  private props: AgendaInput;
+
+  constructor(props: AgendaInput) {
+    this.id = randomUUID();
+    this.props = props;
+    this.validateAndInitialize(props);
   }
 
-  private create(props: AgendaInput): AgendaOutput | string {
+  private validateAndInitialize(props: AgendaInput): void {
     const HORARIO_INICIO = 8;
     const HORARIO_FIM = 18;
     const { dataInicio } = props;
 
     const HORA_AGENDA = new Date(dataInicio).getHours();
 
-    if ((HORA_AGENDA < HORARIO_INICIO) || (HORA_AGENDA > HORARIO_FIM)) return 'Horário fora do expediente';
+    if (HORA_AGENDA < HORARIO_INICIO || HORA_AGENDA > HORARIO_FIM) {
+      throw new Error('Horário fora do expediente');
+    }
 
-    this.props.id = randomUUID();
-    this.props.servicoId = props.servicoId;
-    this.props.veiculoId = props.veiculoId;
-    this.props.dataInicio = props.dataInicio ?? new Date();
-    this.props.dataFim = props.dataFim ?? null;
-
-    return {
-      id: this.props.id,
-      servicoId: this.props.servicoId,
-      veiculoId: this.props.veiculoId,
-      dataInicio: this.props.dataInicio,
-      dataFim: this.props.dataFim,
+    this.props = {
+      ...props,
+      dataInicio: new Date(props.dataInicio),
+      dataFim: new Date(props.dataFim),
     };
   }
 
-  set dataInicio(dataInicio: Date) {
-    this.props.dataInicio = dataInicio;
-  }
-
-  getEntite(): AgendaOutput {
+  getEntidade(): AgendaOutput {
     return {
-      id: this.props.id,
-      servicoId: this.props.servicoId,
+      id: this.id,
+      servicoIds: this.props.servicoIds,
       veiculoId: this.props.veiculoId,
       dataInicio: this.props.dataInicio,
       dataFim: this.props.dataFim,
