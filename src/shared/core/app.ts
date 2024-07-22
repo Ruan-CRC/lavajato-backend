@@ -4,10 +4,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import usersRouters from '@/modules/users/infra/http/routers/users.routers';
-import veiculoRouters from '@/modules/veiculos/infra/http/routers/veiculoRouters';
-import servicosRouters from '@/modules/servicos/infra/http/routers/servicosRouters';
-import servicoVeiculoRouters from '@/modules/agenda/infra/http/routers/servicoVeiculo.router';
+import handler from '../infra/modules/api/v1/handler';
 
 // Dotenv Config
 dotenv.config();
@@ -41,10 +38,7 @@ class App {
     // Health Check
     this.app.get('/api/v1/healthcheck', (request: Request, response: Response) => response.status(200).json({ Ok: true }));
 
-    this.app.use('/api/v1/users', usersRouters);
-    this.app.use('/api/v1/veiculos', veiculoRouters);
-    this.app.use('/api/v1/servicos', servicosRouters);
-    this.app.use('/api/v1/agenda', servicoVeiculoRouters);
+    this.app.use(handler);
   }
 }
 
