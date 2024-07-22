@@ -1,17 +1,8 @@
-import { Prisma, Servico } from '@prisma/client';
-
-export interface ServicosWithMetadados {
-  id: number
-  nome: string
-  descricao: string
-  servicoValor: {
-    valor: number
-    tempo: number
-  }[]
-}
+import { Servico } from '@prisma/client';
+import { ServicosWithMetadados, InputServicosWithMetadados } from '../services/createServicos/createServico';
 
 export default interface ServicosInterface {
-  create(data: Prisma.ServicoCreateNestedManyWithoutAgendasInput): Promise<Servico>;
+  create(data: InputServicosWithMetadados): Promise<ServicosWithMetadados>;
   all(): Promise<Servico[]>;
   getById(id: number[]): Promise<ServicosWithMetadados[] | null>;
 }
