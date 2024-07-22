@@ -1,6 +1,6 @@
 import bcryptjs from 'bcryptjs';
 import CreateUserService from './createUserService';
-import { CreateUserInterface } from '../interfaces/createUserInterface';
+import { CreateUserInterface } from '../../interfaces/createUserInterface';
 
 jest.mock('bcryptjs');
 

@@ -10,7 +10,6 @@ generator client {
 model User {
   id       Int       @id @default(autoincrement())
   idUser   String    @unique @default(uuid())
-  name     String
   email    String    @unique
   password String
   telefone String?
@@ -29,28 +28,29 @@ model Veiculo {
 }
 
 model Servico {
-  id           Int            @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   nome         String
   descricao    String?
-  veiculos     Agenda[]
-  servicoValor ServicoValor[]
+  servicoValor ServicoMetadados[]
+  agendaId     String
+  agendas      Agenda[]
 }
 
 model Agenda {
   id         String    @id @default(uuid())
+  dataInicio DateTime  @unique
+  dataFim    DateTime
+  servicos   Servico[]
   veiculoId  Int
-  servicoId  Int
   veiculo    Veiculo   @relation(fields: [veiculoId], references: [id])
-  servico    Servico   @relation(fields: [servicoId], references: [id])
-  dataInicio DateTime? @default(now())
-  dataFim    DateTime?
 
   @@map("veiculos_servicos")
 }
 
-model ServicoValor {
+model ServicoMetadados {
   id             Int         @id @default(autoincrement())
   valor          Float
+  tempo          Int
   tipoVeiculoId  Int
   servicoValorId Int
   servico        Servico     @relation(fields: [servicoValorId], references: [id])
@@ -58,10 +58,10 @@ model ServicoValor {
 }
 
 model TipoVeiculo {
-  id           Int               @id @default(autoincrement())
-  nome         TiposVeiculosEnum
+  id           Int                @id @default(autoincrement())
+  nome         TiposVeiculosEnum  @unique
   veiculo      Veiculo[]
-  servicoValor ServicoValor[]
+  servicoValor ServicoMetadados[]
 }
 
 enum TiposVeiculosEnum {

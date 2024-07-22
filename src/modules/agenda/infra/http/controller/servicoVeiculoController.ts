@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import UpdateServicoService from '@/modules/agenda/services/updateServicoService';
-import AddServicosService from '@/modules/agenda/services/addServicos';
-import ServicosAgendados from '@/modules/agenda/services/servicosAgendados';
+import UpdateServicoService from '@/modules/agenda/services/updateServicos/updateServicoService';
+import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
+import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
 
 import { amqpInstance } from '@/shared/core/server';
 
@@ -14,9 +14,9 @@ export default class ServicoVeiculoController {
   ) { }
 
   async servicosEmAgendamento(request: Request, response: Response) {
-    const data = await this.servicosAgendados.servicosAgendados();
+    const allAgendas = await this.servicosAgendados.servicosAgendados();
 
-    return response.status(200).json({ data });
+    return response.status(200).json(allAgendas);
   }
 
   async update(request: Request, response: Response) {

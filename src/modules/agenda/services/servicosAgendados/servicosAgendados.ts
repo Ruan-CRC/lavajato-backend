@@ -10,6 +10,6 @@ export default class ServicosAgendados {
       return 'Nenhum serviço agendado';
     }
 
-    return { servicosEmAgendamento };
+    return servicosEmAgendamento;
   }
 }

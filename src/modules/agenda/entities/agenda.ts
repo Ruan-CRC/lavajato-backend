@@ -1,26 +1,44 @@
-export type AgendaType = {
-  veiculoId: number;
-  servicoId: number;
-  dataInicio?: string | Date;
-  dataFim?: string | Date;
-};
+import { randomUUID, UUID } from 'node:crypto';
+import { AgendaInput, AgendaOutput } from './agenda.d';
 
-export class Agenda {
-  public protected id: uuid;
-  constructor(public props: AgendaType) {
-    this.props.servicoId = props.servicoId;
-    this.props.veiculoId = props.veiculoId;
-    this.props.dataInicio = props.dataInicio ?? new Date();
-    this.props.dataFim = props.dataFim ?? null;
+class Agenda {
+  private id: UUID;
+
+  private props: AgendaInput;
+
+  constructor(props: AgendaInput) {
+    this.id = randomUUID();
+    this.props = props;
+    this.validateAndInitialize(props);
   }
 
-  create(veiculoId: number, servicoId: number) {
-    const dataInicio = new Date();
+  private validateAndInitialize(props: AgendaInput): void {
+    const HORARIO_INICIO = 8;
+    const HORARIO_FIM = 18;
+    const { dataInicio } = props;
+
+    const HORA_AGENDA = new Date(dataInicio).getHours();
+
+    if (HORA_AGENDA < HORARIO_INICIO || HORA_AGENDA > HORARIO_FIM) {
+      throw new Error('Horário fora do expediente');
+    }
 
     this.props = {
-      veiculoId,
-      servicoId,
-      dataInicio,
+      ...props,
+      dataInicio: new Date(props.dataInicio),
+      dataFim: new Date(props.dataFim),
+    };
+  }
+
+  getEntidade(): AgendaOutput {
+    return {
+      id: this.id,
+      servicoIds: this.props.servicoIds,
+      veiculoId: this.props.veiculoId,
+      dataInicio: this.props.dataInicio,
+      dataFim: this.props.dataFim,
     };
   }
 }
+
+export default Agenda;
