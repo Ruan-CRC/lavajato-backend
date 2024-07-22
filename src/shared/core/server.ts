@@ -20,15 +20,16 @@ app.listen(porta, async () => {
   console.log(`Server running on port ${porta}`);
 
   await amqpInstance.connect();
-  const socketInstance = websocketInstance.socket;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   await amqpInstance.consumeFromQueue(process.env.RABBITMQ_AGENDA_QUEUE, async (payload) => {
+    const socketInstance = websocketInstance.socket;
     const payloadJson = JSON.parse(payload);
+
     const props = {
-      veiculoId: payloadJson.veiculoId,
-      servicoIds: payloadJson.servicoId,
-      dataInicio: payloadJson.dataIncio,
+      veiculoId: payloadJson.veiculos,
+      servicoIds: payloadJson.servicos,
+      dataInicio: payloadJson.dataInicio,
     };
 
     const result = await addServicosService.add(props);

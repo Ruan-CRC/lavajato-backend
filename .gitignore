@@ -44,4 +44,5 @@ yarn.lock
 tmp.txt
 .docker/rabbitmq/*
 
-.snaplet/dataModel.json
+.snaplet
+.snaplet/*

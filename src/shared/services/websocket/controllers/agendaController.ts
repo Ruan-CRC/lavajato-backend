@@ -2,7 +2,7 @@
 import { Socket } from 'socket.io';
 
 // import { Agenda } from '@prisma/client';
-import ServicosAgendados from '../../../../modules/agenda/services/servicosAgendados';
+import ServicosAgendados from '../../../../modules/agenda/services/servicosAgendados/servicosAgendados';
 // import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
 
 import { amqpInstance } from '@/shared/core/server';
