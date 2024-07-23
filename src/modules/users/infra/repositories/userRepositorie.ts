@@ -33,6 +33,7 @@ export default class UsersRepository implements CreateUserInterface {
       telefone: user.telefone ?? undefined,
       endereco: user.endereco ?? undefined,
       veiculos: veiculos.map((veiculo) => ({
+        id: veiculo.id,
         placa: veiculo.placa,
         tipo: veiculo.tipoVeiculoId,
       })),

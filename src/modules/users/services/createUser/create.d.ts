@@ -6,6 +6,7 @@ export interface OutputCreateUser {
   telefone?: string
   endereco?: string
   veiculos: {
+    id: number;
     placa: string;
     tipo: number;
   }[];

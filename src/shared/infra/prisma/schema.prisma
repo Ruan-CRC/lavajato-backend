@@ -32,7 +32,7 @@ model Servico {
   nome         String
   descricao    String?
   servicoValor ServicoMetadados[]
-  agendaId     String
+  agendaId     String?
   agendas      Agenda[]
 }
 

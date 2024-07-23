@@ -1,6 +1,7 @@
-import { Prisma, Servico } from '@prisma/client';
+import { Servico } from '@prisma/client';
 import prisma from '../../../../shared/infra/prisma/prisma';
-import ServicosInterface, { ServicosWithMetadados } from '../../interfaces/servicosInterface';
+import ServicosInterface from '../../interfaces/servicosInterface';
+import { ServicosWithMetadados, InputServicosWithMetadados } from '../../services/createServicos/createServico';
 
 export default class ServicoRepository implements ServicosInterface {
   async all(): Promise<Servico[]> {
@@ -9,17 +10,37 @@ export default class ServicoRepository implements ServicosInterface {
     return servicos;
   }
 
-  async create(data: Prisma.ServicoCreateInput): Promise<Servico> {
+  async create(data: InputServicosWithMetadados): Promise<ServicosWithMetadados> {
     const servico = await prisma.servico.create({
-      data,
+      data: {
+        nome: data.nome,
+        descricao: data.descricao,
+        servicoValor: {
+          create: data.servicoValor.map((servce) => ({
+            valor: servce.valor,
+            tempo: servce.tempo,
+            tipoVeiculo: {
+              connect: { id: servce.tipoVeiculoId },
+            },
+          })),
+        },
+      },
     });
 
-    return {
-      id: servico.id,
-      nome: servico.nome,
-      descricao: servico.descricao,
-      valor: servico.valor,
-    };
+    const servicoComValores = await prisma.servico.findUnique({
+      where: { id: servico.id },
+      include: {
+        servicoValor: {
+          select: {
+            tipoVeiculoId: true,
+            valor: true,
+            tempo: true,
+          },
+        },
+      },
+    });
+
+    return servicoComValores;
   }
 
   async getById(ids: number[]): Promise<ServicosWithMetadados[]> {

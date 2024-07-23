@@ -1,6 +1,6 @@
 import ServicoController from '../infra/http/controller/servicosController';
 import ServicoRepository from '../infra/repositories/servicosRepositorie';
-import CreateServicoService from '../services/createServicos';
+import CreateServicoService from '../services/createServicos/createServicoServices';
 import AllService from '../services/allServicos';
 
 export default class ServicoFactory {
