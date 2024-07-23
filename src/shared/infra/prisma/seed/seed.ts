@@ -1,50 +1,35 @@
 import { createSeedClient } from '@snaplet/seed';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { copycat } from '@snaplet/copycat';
+
+import { randomUUID } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
 
-import { WebSocket } from 'ws';
+import { websocketInstance } from '@/shared/core/server';
 
 const prisma = new PrismaClient();
-
 const horasEntreServicos = 4;
 
-async function associateServiceToVehicle(ws: WebSocket, data: Date = new Date()) {
-  try {
-    const veiculos = await prisma.veiculo.findMany();
-    const servicos = await prisma.servico.findMany();
-
-    const randomServico = servicos[Math.floor(Math.random() * servicos.length)];
-    const randomVeiculo = veiculos[Math.floor(Math.random() * veiculos.length)];
-
-    const payload = await prisma.agenda.create({
-      data: {
-        veiculoId: randomVeiculo.id,
-        servicoId: randomServico.id,
-        dataInicio: data,
-      },
-    });
-
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(payload));
-    } else {
-      ws.on('open', () => {
-        ws.send(JSON.stringify(payload));
-      });
-    }
-  } catch (error) {
-    console.error('Error associating service to vehicles:', error);
-  }
-}
-
-async function main(ws: WebSocket) {
-  const seed = await createSeedClient();
+export default async function main() {
+  const seed = await createSeedClient({
+    connect: true,
+  });
   await seed.$resetDatabase();
 
-  await seed.user((x) => x(10));
-  await seed.veiculo((x) => x(10));
-  await seed.servico((x) => x(5));
+  await seed.tipoVeiculo((x) => x(3));
+  await seed.user((x) => x(5, (ctx) => ({
+    idUser: randomUUID(),
+    email: copycat.email(ctx.seed, {
+      domain: '@gmail.com',
+    }),
+    password: '123456',
+  })));
+  await seed.veiculo((x) => x(8));
+  await seed.servico((x) => x(3));
+  await seed.servicoMetadados((x) => x(12));
+  await seed.agenda((x) => x(2));
 
   let agendamento: Date | number = new Date();
-
   let i = 25;
 
   const intervalId = setInterval(async () => {
@@ -53,11 +38,25 @@ async function main(ws: WebSocket) {
       return;
     }
 
-    await associateServiceToVehicle(ws, new Date(agendamento));
+    await seed.agenda((x) => x(1, {
+      dataInicio: new Date(agendamento),
+      dataFim: new Date(new Date(agendamento).valueOf() + 1 * 60 * 60 * 1000),
+    }));
+
     agendamento = new Date(agendamento).valueOf() + horasEntreServicos * 60 * 60 * 1000;
+
+    const payload = await prisma.agenda.findFirst({
+      orderBy: {
+        dataInicio: 'desc',
+      },
+    });
+
+    const socketInstance = websocketInstance.socket;
+
+    socketInstance.emit('agenda:create', payload);
 
     i -= 1;
   }, 5000);
-}
 
-export default main;
+  await prisma.$disconnect();
+}

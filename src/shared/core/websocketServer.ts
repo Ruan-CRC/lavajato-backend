@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import agendaHandler from '../services/websocket/handlers/agendaHandler';
+import main from '../infra/prisma/seed/seed';
 
 class WebsocketServer {
   private static instance: WebsocketServer;
@@ -31,12 +32,19 @@ class WebsocketServer {
     return this.socketInstance;
   }
 
+  public get ioInstance(): Server {
+    return this.io;
+  }
+
   private handleSocketEvents(socket: Socket) {
     agendaHandler(this.io, socket);
   }
 
   private webSocketEvents() {
     this.io.on('connection', (socket) => {
+      if (process.env.IS_DEV === 'true') {
+        main();
+      }
       this.socketInstance = socket;
       this.handleSocketEvents(socket);
     });
