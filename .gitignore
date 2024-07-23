@@ -46,3 +46,4 @@ tmp.txt
 
 .snaplet
 .snaplet/*
+.snaplet/dataModel.json

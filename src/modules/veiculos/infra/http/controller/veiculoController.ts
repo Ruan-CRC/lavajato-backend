@@ -48,12 +48,7 @@ export default class VeiculoController {
     try {
       const veiculo = await this.getVeiculoService.get(id);
 
-      return res.status(200).json({
-        id: veiculo.id,
-        placa: veiculo.placa,
-        tipo: veiculo.tipo,
-        user: veiculo.userId,
-      });
+      return res.status(200).json(veiculo);
     } catch (err) {
       return res.status(404).json({ error: (err as Error).message });
     }

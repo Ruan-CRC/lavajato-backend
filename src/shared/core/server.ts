@@ -23,7 +23,7 @@ app.listen(porta, async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   await amqpInstance.consumeFromQueue(process.env.RABBITMQ_AGENDA_QUEUE, async (payload) => {
-    const socketInstance = websocketInstance.socket;
+    const socketInstance = websocketInstance.ioInstance;
     const payloadJson = JSON.parse(payload);
 
     const props = {
@@ -33,6 +33,7 @@ app.listen(porta, async () => {
     };
 
     const result = await addServicosService.add(props);
+
     socketInstance.emit('agenda:create', result);
   });
 });

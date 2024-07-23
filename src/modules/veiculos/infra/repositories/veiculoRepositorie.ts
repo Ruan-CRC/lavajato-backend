@@ -5,7 +5,7 @@ import { VeiculoInterface } from '../../interfaces/veiculoInterface';
 
 interface VeiculoInput {
   placa: string;
-  tipo: TipoVeiculo
+  tipo: number
   user: number
 }
 
@@ -16,8 +16,8 @@ export default class VeiculoRepository implements VeiculoInterface {
     return veiculos;
   }
 
-  async index(id: string): Promise<Veiculo | boolean> {
-    const veiculo = await prisma.veiculo.findFirstOrThrow({
+  async index(id: string): Promise<TipoVeiculo | boolean> {
+    const veiculo = await prisma.tipoVeiculo.findFirstOrThrow({
       where: {
         // eslint-disable-next-line radix
         id: parseInt(id),
@@ -39,7 +39,7 @@ export default class VeiculoRepository implements VeiculoInterface {
     const veiculo = await prisma.veiculo.create({
       data: {
         placa: data.placa,
-        TipoVeiculo: { connect: { id: data.tipo.id } },
+        TipoVeiculo: { connect: { id: data.tipo } },
         user: { connect: { id: data.user } },
       },
     });
