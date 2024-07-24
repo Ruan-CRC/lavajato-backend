@@ -41,9 +41,12 @@ dist/**/*
 yarn.lock
 
 .docker/postgres_data
+.docker/pgadmin_data
 tmp.txt
 .docker/rabbitmq/*
 
 .snaplet
 .snaplet/*
 .snaplet/dataModel.json
+
+dist
