@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import CreateUserService from '../../../services/createUser/createUserService';
 import UsersRepository from '../../repositories/userRepositorie';
-import safeParseSchemaModel from '@/shared/infra/helpers/parserZod';
+import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
+import { NotFoundError } from '@/shared/infra/middlewares/errorAbst';
 
 const repo = new UsersRepository();
 
@@ -12,24 +13,27 @@ export default class UserController {
   ) { }
 
   async create(req: Request, res: Response) {
-    const isValidRequest = safeParseSchemaModel(z.object({
+    validaDataWhitSchemaZod(z.object({
       email: z.string().email(),
       password: z.string().min(6),
       veiculos: z.array(z.object({
-        placa: z.string().min(6),
+        placa: z.string().min(7).max(7),
         tipo: z.number().int(),
       })),
     }), req.body);
 
-    if (!isValidRequest) {
-      return res.status(400).json({ error: isValidRequest });
-    }
-
     const { email, password, veiculos } = req.body;
 
     const userExistent = await repo.findByEmail(email);
+
     if (userExistent) {
-      return 'Email address already used!';
+      throw new NotFoundError({
+        errors: [{
+          title: 'user_already_exists',
+          detail: `Usuário já cadastrado: ${email}`,
+          instance: req.baseUrl,
+        }],
+      });
     }
 
     // TODO: verificar se o veiculo já está cadastrado
@@ -39,7 +43,6 @@ export default class UserController {
       password,
       veiculos,
     });
-
     return res.json({ user });
   }
 }

@@ -1,10 +1,13 @@
 // Modules Imports
-import express, { Request, Response } from 'express';
+import express, {
+  Request, Response,
+} from 'express';
 
 import cors from 'cors';
 import dotenv from 'dotenv';
 
 import handler from '../infra/modules/api/v1/handler';
+import errorMiddleware from '../infra/middlewares/error';
 
 // Dotenv Config
 dotenv.config();
@@ -22,6 +25,8 @@ class App {
     this.connection();
     this.middlewares();
     this.routes();
+
+    this.app.use(errorMiddleware);
   }
 
   async connection() {
