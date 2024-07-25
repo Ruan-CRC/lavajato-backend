@@ -1,4 +1,4 @@
-import bcryptjs from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import { UUID, randomUUID } from 'node:crypto';
 import { UserCreateInput, UserCreateOutput } from './user.d';
 
@@ -15,29 +15,8 @@ class User {
   }
 
   private async validateAndInitialize(props: UserCreateInput): Promise<void> {
-    if (props.veiculos.length === 0) {
-      throw new Error('Pelo menos um veículo é necessário');
-    }
-
-    if (!props.email) {
-      throw new Error('Email is required');
-    }
-
-    if (!props.password) {
-      throw new Error('Password is required');
-    }
-
-    const hashedPassword = await new Promise<string>((resolve, reject) => {
-      bcryptjs.genSalt(6, (err: any, salt: any) => {
-        bcryptjs.hash(props.password, salt, (_err: any, hash: any) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(hash);
-          }
-        });
-      });
-    });
+    const salt = await bcrypt.genSalt(6);
+    const hashedPassword = await bcrypt.hash(props.password, salt);
 
     this.props = {
       ...props,

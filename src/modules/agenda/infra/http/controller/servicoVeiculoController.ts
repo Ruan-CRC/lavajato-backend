@@ -1,13 +1,14 @@
 import { Request, Response } from 'express';
 
 import { z } from 'zod';
-import safeParseSchemaModel from '@/shared/infra/helpers/parserZod';
+import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
 
 import UpdateServicoService from '@/modules/agenda/services/updateServicos/updateServicoService';
 import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
 
 import { amqpInstance } from '@/shared/core/server';
+import { NotFoundError } from '@/shared/infra/middlewares/errorAbst';
 
 export default class ServicoVeiculoController {
   constructor(
@@ -18,6 +19,16 @@ export default class ServicoVeiculoController {
 
   async servicosEmAgendamento(request: Request, response: Response) {
     const allAgendas = await this.servicosAgendados.servicosAgendados();
+
+    if (allAgendas.length === 0) {
+      throw new NotFoundError({
+        errors: [{
+          title: 'not_found',
+          detail: 'Nenhum serviço agendado!',
+          instance: request.baseUrl,
+        }],
+      });
+    }
 
     return response.status(200).json(allAgendas);
   }
@@ -33,25 +44,11 @@ export default class ServicoVeiculoController {
   }
 
   async addServico(request: Request, response: Response) {
-    const schema = z.object({
-      veiculoId: z.string(),
-      servicoIds: z.string(),
-      dataInicio: z.string(),
-    });
-
-    if (!schema.safeParse(request.body)) {
-      return response.status(400).json({ message: 'Dados inválidos!' });
-    }
-
-    const isValidRequest = safeParseSchemaModel(z.object({
+    validaDataWhitSchemaZod(z.object({
       veiculoId: z.string(),
       servicoIds: z.string(),
       dataInicio: z.string(),
     }), request.body);
-
-    if (!isValidRequest) {
-      return response.status(400).json({ error: isValidRequest });
-    }
 
     const isPublished = await amqpInstance
       .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, request.body);
