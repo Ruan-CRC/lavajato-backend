@@ -1,10 +1,17 @@
 FROM node:20
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+RUN apt update && \
+  apt install -y wget netcat-traditional && \
+  wget -q -O /usr/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && \
+  chmod +x /usr/bin/wait-for
+
+RUN mkdir -p /home/node/app/node_modules
 
 WORKDIR /home/node/app
 
 COPY package*.json ./
+
+RUN chown -R node:node /home/node/app
 
 USER node
 
@@ -12,8 +19,6 @@ RUN npm install
 
 COPY --chown=node:node . .
 
-RUN npm run build
+EXPOSE 3333 5555 3334
 
-EXPOSE 3333
-
-CMD [ "node", "./dist/shared/core/server.js" ]
+CMD [ "node", "./shared/core/server.js" ]
