@@ -27,8 +27,8 @@ app.listen(porta, async () => {
     const payloadJson = JSON.parse(payload);
 
     const props = {
-      veiculoId: payloadJson.veiculos,
-      servicoIds: payloadJson.servicos,
+      veiculoId: payloadJson.veiculoId,
+      servicoIds: payloadJson.servicoIds,
       dataInicio: payloadJson.dataInicio,
     };
 

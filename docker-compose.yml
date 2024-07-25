@@ -1,9 +1,35 @@
-version: '3'
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs
+    container_name: app
+    entrypoint: wait-for rabbitmq:5672 -t 15 -- npm run dev
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    ports:
+      - "3333:3333"
+      - "5555:5555"
+      - "3334:3334"
+    volumes:
+      - .:/home/node/app
+      - ./node_modules:/home/node/app/node_modules
+
   db:
     image: bitnami/postgresql:latest
     container_name: db
     restart: always
+    tty: true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
     environment:
       - POSTGRESQL_DATABASE=${DB_DATABASE}
       - POSTGRESQL_USERNAME=${DB_USERNAME}
@@ -11,37 +37,30 @@ services:
     volumes:
       - .docker/postgres_data:/bitnami/postgresql/data:rw
     ports:
-      - "5433:5432"
-    networks:
-      - lavajato-network
+      - "${STDOUT_DB_PORT}:5432"
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
     ports:
-      - "88:80"
+      - "${PORT_PGADMIN}:80"
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-    networks:
-      - lavajato-network
+    volumes:
+      - .docker/pgadmin_data:/var/lib/pgadmin
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
-    restart: always
-    hostname: my-rabbit
+    hostname: rabbitmq
     environment:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${PORT_RABBITMQ}:5672"
+      - "${PORT_RABBITMQ_MANAGEMENT}:15672"
     volumes:
       - .docker/rabbitmq/data:/var/lib/rabbitmq
       - .docker/rabbitmq/log:/var/log/rabbitmq
-
-networks:
-  lavajato-network:
-    driver: bridge
