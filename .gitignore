@@ -44,6 +44,7 @@ yarn.lock
 .docker/pgadmin_data
 tmp.txt
 .docker/rabbitmq/*
+.docker/pgadmin_data
 
 .snaplet
 .snaplet/*
