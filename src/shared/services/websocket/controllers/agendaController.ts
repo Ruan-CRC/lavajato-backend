@@ -1,15 +1,11 @@
-/* eslint-disable max-len */
 import { Socket } from 'socket.io';
-
-// import { Agenda } from '@prisma/client';
 import ServicosAgendados from '../../../../modules/agenda/services/servicosAgendados/servicosAgendados';
-// import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
-
 import { amqpInstance } from '@/shared/core/server';
 
-// const veiculoServicosRepository = new VeiculoServicosRepository();
-class AgendaController {
-  constructor(private servicosAgendados: ServicosAgendados) { }
+export default class AgendaController {
+  constructor(
+    private servicosAgendados: ServicosAgendados,
+  ) {}
 
   createAgenda = async (socket: Socket, payload: any) => {
     // let result: Agenda;
@@ -30,5 +26,3 @@ class AgendaController {
     }
   };
 }
-
-export default AgendaController;

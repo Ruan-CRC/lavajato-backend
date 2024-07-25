@@ -7,6 +7,8 @@ import WebsocketServer from './websocketServer';
 import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
 import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
 
+import errorMiddleware from '../infra/middlewares/error';
+
 const veiculoServicosRepository = new VeiculoServicosRepository();
 const addServicosService = new AddServicosService(veiculoServicosRepository);
 
@@ -27,8 +29,8 @@ app.listen(porta, async () => {
     const payloadJson = JSON.parse(payload);
 
     const props = {
-      veiculoId: payloadJson.veiculos,
-      servicoIds: payloadJson.servicos,
+      veiculoId: payloadJson.veiculoId,
+      servicoIds: payloadJson.servicoIds,
       dataInicio: payloadJson.dataInicio,
     };
 
@@ -37,5 +39,7 @@ app.listen(porta, async () => {
     socketInstance.emit('agenda:create', result);
   });
 });
+
+app.use(errorMiddleware);
 
 export { websocketInstance, amqpInstance };

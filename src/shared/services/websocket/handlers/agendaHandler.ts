@@ -1,9 +1,7 @@
 import { Server, Socket } from 'socket.io';
-
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
 import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
 import AgendaController from '../controllers/agendaController';
-// import main from '@/shared/infra/prisma/seed/seed';
 
 const repositorie = new VeiculoServicosRepository();
 const servicosAgendados = new ServicosAgendados(repositorie);
