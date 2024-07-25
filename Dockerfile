@@ -19,9 +19,7 @@ RUN npm install
 
 COPY --chown=node:node . .
 
-RUN npx prisma migrate dev
-
-EXPOSE 3333
+EXPOSE 3333 5555 3334
 
 CMD [ "npm", "run", "dev" ]
 

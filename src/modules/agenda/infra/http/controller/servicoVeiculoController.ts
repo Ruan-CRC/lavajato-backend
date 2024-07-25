@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 
+import { z } from 'zod';
+import safeParseSchemaModel from '@/shared/infra/helpers/parserZod';
+
 import UpdateServicoService from '@/modules/agenda/services/updateServicos/updateServicoService';
 import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
@@ -30,6 +33,26 @@ export default class ServicoVeiculoController {
   }
 
   async addServico(request: Request, response: Response) {
+    const schema = z.object({
+      veiculoId: z.string(),
+      servicoIds: z.string(),
+      dataInicio: z.string(),
+    });
+
+    if (!schema.safeParse(request.body)) {
+      return response.status(400).json({ message: 'Dados inválidos!' });
+    }
+
+    const isValidRequest = safeParseSchemaModel(z.object({
+      veiculoId: z.string(),
+      servicoIds: z.string(),
+      dataInicio: z.string(),
+    }), request.body);
+
+    if (!isValidRequest) {
+      return response.status(400).json({ error: isValidRequest });
+    }
+
     const isPublished = await amqpInstance
       .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, request.body);
 
