@@ -15,7 +15,7 @@ RUN chown -R node:node /home/node/app
 
 USER node
 
-RUN npm install
+RUN npm install --dev
 
 COPY --chown=node:node . .
 
