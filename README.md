@@ -21,22 +21,21 @@ Este é um projeto backend em Node.js que inclui uma API RESTful para interaçã
   DATABASE_URL="postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?schema=public"
    
 2. **Sequências de execução:**
-
    ```bash
-   npm i
-``
+   cp .env.example .env
 
-   ```bash
-   docker compose up -d
-  ````
+```bash
+   mkdir .docker/postgres_data && mkdir .docker/pgadmin_data
 
-   ```bash
-   npm run prisma:migrate
-  ```
+```bash
+   mkdir .docker/postgres_data && mkdir .docker/pgadmin_data
 
-   ```bash
-   npm run dev
-  ```
+```bash
+   sudo chown -R 5050:5050 .docker/pgadmin_data && sudo chmod -R 755 .docker/pgadmin_data
+
+```bash
+   sudo chown -R 1001:1001 .docker/postgres_data && sudo chmod -R 755 .docker/postgres_data
+
 
 ## Endpoints
 // um link para o postman
