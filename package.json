@@ -11,6 +11,7 @@
   "scripts": {
     "test": "jest",
     "dev": "tsx watch src/shared/core/server.ts",
+    "start": "node dist/shared/core/server.js",
     "build": "tsup src",
     "prisma:migrate": "prisma migrate dev && npm run postmigrate",
     "prisma:studio": "npx prisma studio",

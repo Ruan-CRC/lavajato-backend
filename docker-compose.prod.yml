@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.prod
     image: nodejs
     container_name: app
-    entrypoint: wait-for rabbitmq:5672 -t 15 -- npm run dev
+    entrypoint: wait-for rabbitmq:5672 -t 15 -- npm run start
     restart: unless-stopped
     depends_on:
       db:
