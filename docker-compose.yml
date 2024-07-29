@@ -2,9 +2,10 @@ services:
   app:
     image: nodejs
     container_name: app
-    entrypoint: wait-for rabbitmq:5672 -t 15 -- npm run dev
+    entrypoint: wait-for rabbitmq:5672 -t 20 -- npm run dev
     restart: unless-stopped
     env_file: .env
+    command: npm run dev
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,7 +17,6 @@ services:
       - "${STDOUT_PORT_WS_SERVER}:${PORT_WS_SERVER}"
     volumes:
       - .:/home/node/app
-      - ./node_modules:/home/node/app/node_modules
     depends_on:
       db:
         condition: service_healthy

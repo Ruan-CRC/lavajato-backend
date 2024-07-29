@@ -5,21 +5,13 @@ RUN apt update && \
   wget -q -O /usr/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && \
   chmod +x /usr/bin/wait-for
 
-RUN mkdir -p /home/node/app/node_modules
-
 WORKDIR /home/node/app
 
 COPY package*.json ./
 
-RUN chown -R node:node /home/node/app
+RUN npm install --include=dev
 
-USER node
-
-RUN npm install --dev
-
-COPY --chown=node:node . .
+COPY . .
 
 EXPOSE 3333 5555 3334
-
-CMD [ "npm", "run", "dev" ]
 
