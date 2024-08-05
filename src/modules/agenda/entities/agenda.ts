@@ -1,13 +1,16 @@
 import { randomUUID, UUID } from 'node:crypto';
-import { AgendaInput, AgendaOutput } from './agenda.d';
+import { AgendaInput, AgendaOutput, AgendaError } from './agenda.d';
 
 class Agenda {
   private id: UUID;
+
+  private error: AgendaError;
 
   private props: AgendaInput;
 
   constructor(props: AgendaInput) {
     this.id = randomUUID();
+    this.error = { hasError: false, message: [] };
     this.props = props;
     this.validateAndInitialize(props);
   }
@@ -20,7 +23,8 @@ class Agenda {
     const HORA_AGENDA = new Date(dataInicio).getHours();
 
     if (HORA_AGENDA < HORARIO_INICIO || HORA_AGENDA > HORARIO_FIM) {
-      throw new Error('Horário fora do expediente');
+      this.error.hasError = true;
+      this.error.message.push('Horário fora do expediente');
     }
 
     this.props = {
@@ -38,6 +42,10 @@ class Agenda {
       dataInicio: this.props.dataInicio,
       dataFim: this.props.dataFim,
     };
+  }
+
+  getError(): AgendaError {
+    return this.error;
   }
 }
 

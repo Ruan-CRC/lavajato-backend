@@ -14,17 +14,18 @@ Este é um projeto backend em Node.js que inclui uma API RESTful para interaçã
 
    ```bash
    git clone https://github.com/Ruan-CRC/lavajato-backend.git
+   ```
 
 ## Execução
 
 1. **Configure a url postgresql:**
-  DATABASE_URL="postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?schema=public"
-   
+   DATABASE_URL="postgresql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?schema=public"
 2. **Sequências de execução:**
    ```bash
    cp .env.example .env
+   ```
 
-```bash
+````bash
    mkdir .docker/postgres_data && mkdir .docker/pgadmin_data
 
 ```bash
@@ -36,6 +37,8 @@ Este é um projeto backend em Node.js que inclui uma API RESTful para interaçã
 ```bash
    sudo chown -R 1001:1001 .docker/postgres_data && sudo chmod -R 755 .docker/postgres_data
 
-
+```bash
+   npx prisma prisma migrate dev
 ## Endpoints
 // um link para o postman
+````

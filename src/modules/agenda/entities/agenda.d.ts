@@ -14,3 +14,8 @@ export interface AgendaOutput {
   dataInicio: Date;
   dataFim: Date;
 }
+
+export type AgendaError = {
+  hasError: boolean;
+  message?: string[];
+};
