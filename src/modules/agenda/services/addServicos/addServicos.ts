@@ -1,18 +1,20 @@
+import decorators from 'tsyringe';
 import dayjs from 'dayjs';
-
 import { ServicoVeiculoInterface } from '../../interfaces/servicoVeiculoInterface';
 import ServicoRepository from '@/modules/servicos/infra/repositories/servicosRepositorie';
 import Agenda from '../../entities/agenda';
 import { CreateInputDTO } from './addServicos.dto';
-import { AgendaOutput } from '../../entities/agenda.d';
+import { AgendaOutput, AgendaError } from '../../entities/agenda.d';
 
+const { injectable, inject } = decorators;
+
+@injectable()
 export default class AddServicosService {
   constructor(
-    private servicoVeiculoInterface: ServicoVeiculoInterface,
+    @inject('ServicoVeiculoInterface') private servicoVeiculoInterface: ServicoVeiculoInterface,
   ) { }
 
-  async add(props: CreateInputDTO): Promise<AgendaOutput> {
-    // TODO: validacao de veiculo e servico
+  async add(props: CreateInputDTO): Promise<AgendaOutput | AgendaError> {
     const { veiculoId, servicoIds, dataInicio } = props;
 
     const serv = new ServicoRepository();
@@ -30,6 +32,10 @@ export default class AddServicosService {
       dataInicio,
       dataFim,
     });
+
+    if (agenda.getError().hasError === true) {
+      return agenda.getError();
+    }
 
     const servico = await this.servicoVeiculoInterface
       .addServicos(agenda.getEntidade());

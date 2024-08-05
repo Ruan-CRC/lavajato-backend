@@ -8,14 +8,20 @@ import AddServicosService from '@/modules/agenda/services/addServicos/addServico
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
 
 import { amqpInstance } from '@/shared/core/server';
-import { NotFoundError } from '@/shared/infra/middlewares/errorAbst';
+import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
+import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
+import { AgendaError } from '../../../entities/agenda.d';
 
 export default class ServicoVeiculoController {
+  private validaAgenda: ValidaAgenda;
+
   constructor(
     private updateServico: UpdateServicoService,
     private addServicoService: AddServicosService,
     private servicosAgendados: ServicosAgendados,
-  ) { }
+  ) {
+    this.validaAgenda = new ValidaAgenda();
+  }
 
   async servicosEmAgendamento(request: Request, response: Response) {
     const allAgendas = await this.servicosAgendados.servicosAgendados();
@@ -44,19 +50,42 @@ export default class ServicoVeiculoController {
   }
 
   async addServico(request: Request, response: Response) {
-    validaDataWhitSchemaZod(z.object({
-      veiculoId: z.string(),
-      servicoIds: z.string(),
-      dataInicio: z.string(),
-    }), request.body);
+    try {
+      validaDataWhitSchemaZod(z.object({
+        veiculoId: z.number(),
+        servicoIds: z.array(z.number()),
+        dataInicio: z.string(),
+      }), request.body);
 
-    const isPublished = await amqpInstance
-      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, request.body);
+      const servico = await this.validaAgenda.add(request.body);
 
-    if (!isPublished) {
-      return response.status(400);
+      if (this.isAgendaError(servico)) {
+        if (servico.hasError) {
+          throw new BadRequestError({
+            type: 'validation_error',
+            errors: servico.message?.map((message) => ({
+              title: 'validation_error',
+              detail: message,
+              instance: 'agenda/create',
+            })) || [],
+          });
+        }
+      }
+
+      const isPublished = await amqpInstance
+        .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, request.body);
+
+      if (!isPublished) {
+        return response.status(400);
+      }
+
+      return response.status(200).json({ message: 'Serviço solicitado!' });
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    return response.status(200).json({ message: 'Serviço adicionado com sucesso!' });
+  isAgendaError(servico: boolean | AgendaError): servico is AgendaError {
+    return (servico as AgendaError).hasError !== undefined;
   }
 }
