@@ -6,7 +6,8 @@ import { randomUUID } from 'node:crypto';
 import dayjs from 'dayjs';
 import fs from 'fs/promises';
 
-const horasEntreServicos = 2;
+const horasEntreServicos = 1;
+const QUANTIDADE_SERVICOS = 15000;
 const veiculosInMemory = [];
 const servicosInMemory = [];
 
@@ -39,7 +40,7 @@ async function main() {
   const agendamentos = [];
 
   // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < 250; i++) {
+  for (let i = 0; i < QUANTIDADE_SERVICOS; i++) {
     const date = new Date(agendamento);
     const formattedDate = dayjs(date).toISOString();
 

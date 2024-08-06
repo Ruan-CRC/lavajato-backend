@@ -51,3 +51,5 @@ tmp.txt
 .snaplet/dataModel.json
 
 dist
+
+k6/seedData.json

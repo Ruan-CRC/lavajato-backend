@@ -1,6 +1,7 @@
 import { UUID } from 'node:crypto';
 
 export interface AgendaInput {
+  id?: UUID;
   veiculoId: number;
   servicoIds: number[];
   dataInicio: Date;
