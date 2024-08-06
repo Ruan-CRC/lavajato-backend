@@ -1,26 +1,4 @@
 services:
-  app:
-    image: nodejs
-    container_name: app
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- npm run dev
-    restart: unless-stopped
-    env_file: .env
-    command: npm run dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=development 
-    ports:
-      - "${STDOUT_PORT_API}:${PORT_API}"
-      - "${PORT_PRISMA}:${PORT_PRISMA}"
-      - "${STDOUT_PORT_WS_SERVER}:${PORT_WS_SERVER}"
-    volumes:
-      - .:/home/node/app
-    depends_on:
-      db:
-        condition: service_healthy
-
   db:
     image: bitnami/postgresql:latest
     container_name: db

@@ -1,24 +1,40 @@
 import { Socket } from 'socket.io';
-import ServicosAgendados from '../../../../modules/agenda/services/servicosAgendados/servicosAgendados';
-import { amqpInstance } from '@/shared/core/server';
+import { container } from 'tsyringe';
+import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
+import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
+import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
+import { ServicoVeiculoInterface } from '@/modules/agenda/interfaces/servicoVeiculoInterface';
+import { websocketInstance } from '@/shared/core/server';
+import { AgendaOutput } from '../../../../modules/agenda/entities/agenda.d';
 
-export default class AgendaController {
-  constructor(
-    private servicosAgendados: ServicosAgendados,
-  ) {}
+container.register<ServicoVeiculoInterface>('ServicoVeiculoInterface', {
+  useClass: VeiculoServicosRepository,
+});
 
-  createAgenda = async (socket: Socket, payload: any) => {
-    // let result: Agenda;
-    try {
-      amqpInstance.publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, payload);
-    } catch (error) {
-      console.error({ status: 'error', error });
-    }
-  };
+const addServicosService = container.resolve(AddServicosService);
+const servicosAgendados = container.resolve(ServicosAgendados);
+
+export default class AgendaControllerWS {
+  async createAgenda(payload: string) {
+    const socketInstance = websocketInstance.ioInstance;
+    const payloadJson = JSON.parse(payload);
+
+    const props: AgendaOutput = {
+      id: payloadJson.id,
+      veiculoId: payloadJson.veiculoId,
+      servicoIds: payloadJson.servicoIds,
+      dataInicio: payloadJson.dataInicio,
+      dataFim: payloadJson.dataFim,
+    };
+
+    const result = await addServicosService.add(props);
+
+    socketInstance.emit('agenda:create', result);
+  }
 
   enviarAgendas = async (socket: Socket) => {
     try {
-      const result = await this.servicosAgendados.servicosAgendados();
+      const result = await servicosAgendados.servicosAgendados();
 
       socket.emit('agenda:all', result);
     } catch (error) {

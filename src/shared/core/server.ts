@@ -1,20 +1,14 @@
 /* eslint-disable no-console */
+import 'reflect-metadata';
 import app from './app';
-// import WsServer from './wsServer';
 import AmqpLibService from '@/shared/services/rabbitMQ/amqpLibService';
-import WebsocketServer from './websocketServer';
-
-import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
-import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
-
+import AgendaControllerWS from '../services/websocket/controllers/agendaController';
 import errorMiddleware from '../infra/middlewares/error';
-
-const veiculoServicosRepository = new VeiculoServicosRepository();
-const addServicosService = new AddServicosService(veiculoServicosRepository);
+import WebsocketServer from '@/shared/core/websocketServer';
 
 const websocketInstance = WebsocketServer.Instance;
 const amqpInstance = AmqpLibService.Instance;
-
+const agendaInstance = new AgendaControllerWS();
 const porta = process.env.PORT_API || 3333;
 
 app.listen(porta, async () => {
@@ -23,23 +17,10 @@ app.listen(porta, async () => {
 
   await amqpInstance.connect();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   await amqpInstance.consumeFromQueue(process.env.RABBITMQ_AGENDA_QUEUE, async (payload) => {
-    const socketInstance = websocketInstance.ioInstance;
-    const payloadJson = JSON.parse(payload);
-
-    const props = {
-      veiculoId: payloadJson.veiculoId,
-      servicoIds: payloadJson.servicoIds,
-      dataInicio: payloadJson.dataInicio,
-    };
-
-    const result = await addServicosService.add(props);
-
-    socketInstance.emit('agenda:create', result);
+    agendaInstance.createAgenda(payload);
   });
 });
-
 app.use(errorMiddleware);
 
 export { websocketInstance, amqpInstance };

@@ -5,7 +5,7 @@
   ],
   "parserOptions": {
     "project": "./tsconfig.json",
-    "tsconfigRootDir": "/home/pcworker/lavajato-backend"
+    "tsconfigRootDir": "."
   },
   "rules": {
     "no-redeclare": "off",

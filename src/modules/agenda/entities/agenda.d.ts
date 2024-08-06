@@ -1,6 +1,7 @@
 import { UUID } from 'node:crypto';
 
 export interface AgendaInput {
+  id?: UUID;
   veiculoId: number;
   servicoIds: number[];
   dataInicio: Date;
@@ -14,3 +15,8 @@ export interface AgendaOutput {
   dataInicio: Date;
   dataFim: Date;
 }
+
+export type AgendaError = {
+  hasError: boolean;
+  message?: string[];
+};

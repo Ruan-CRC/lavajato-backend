@@ -1,4 +1,7 @@
+import { UUID } from 'node:crypto';
+
 export interface CreateInputDTO {
+  id?: UUID;
   veiculoId: number;
   servicoIds: number[];
   dataInicio: Date;
