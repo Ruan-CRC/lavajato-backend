@@ -9,24 +9,28 @@ class Agenda {
   private props: AgendaInput;
 
   constructor(props: AgendaInput) {
-    this.id = randomUUID();
     this.error = { hasError: false, message: [] };
-    this.props = props;
-    this.validateAndInitialize(props);
+    this.validate(props);
+    this.initialize(props);
+    this.id = randomUUID() || props.id;
   }
 
-  private validateAndInitialize(props: AgendaInput): void {
-    const HORARIO_INICIO = 8;
-    const HORARIO_FIM = 18;
+  private validate(props: AgendaInput) {
+    const HORARIO_ABRE_LAVAJATO = 8;
+    const HORARIO_FECHA_LAVAJATO = 18;
     const { dataInicio } = props;
 
-    const HORA_AGENDA = new Date(dataInicio).getHours();
+    const HORA_INICIA_AGENDA = new Date(dataInicio).getHours();
 
-    if (HORA_AGENDA < HORARIO_INICIO || HORA_AGENDA > HORARIO_FIM) {
+    if (
+      (HORA_INICIA_AGENDA < HORARIO_ABRE_LAVAJATO) || (HORA_INICIA_AGENDA > HORARIO_FECHA_LAVAJATO)
+    ) {
       this.error.hasError = true;
       this.error.message.push('Horário fora do expediente');
     }
+  }
 
+  private initialize(props: AgendaInput): void {
     this.props = {
       ...props,
       dataInicio: new Date(props.dataInicio),

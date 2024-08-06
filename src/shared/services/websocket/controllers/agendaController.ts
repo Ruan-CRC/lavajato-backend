@@ -4,9 +4,8 @@ import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servi
 import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
 import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
 import { ServicoVeiculoInterface } from '@/modules/agenda/interfaces/servicoVeiculoInterface';
-
-import { BadRequestError } from '@/shared/infra/middlewares/errorAbst';
 import { websocketInstance } from '@/shared/core/server';
+import { AgendaOutput } from '../../../../modules/agenda/entities/agenda.d';
 
 container.register<ServicoVeiculoInterface>('ServicoVeiculoInterface', {
   useClass: VeiculoServicosRepository,
@@ -20,24 +19,15 @@ export default class AgendaControllerWS {
     const socketInstance = websocketInstance.ioInstance;
     const payloadJson = JSON.parse(payload);
 
-    const props = {
+    const props: AgendaOutput = {
+      id: payloadJson.id,
       veiculoId: payloadJson.veiculoId,
       servicoIds: payloadJson.servicoIds,
       dataInicio: payloadJson.dataInicio,
+      dataFim: payloadJson.dataFim,
     };
 
     const result = await addServicosService.add(props);
-
-    if ('hasError' in result && result.hasError) {
-      throw new BadRequestError({
-        type: 'validation_error',
-        errors: result.message.map((message) => ({
-          title: 'validation_error',
-          detail: message,
-          instance: 'agenda/create',
-        })),
-      });
-    }
 
     socketInstance.emit('agenda:create', result);
   }
