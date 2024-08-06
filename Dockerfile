@@ -5,20 +5,20 @@ RUN apt update && \
   wget -q -O /usr/bin/wait-for https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for && \
   chmod +x /usr/bin/wait-for
 
-RUN mkdir -p /home/node/app/node_modules
+# Create app directory
+WORKDIR /usr/src/app
 
-WORKDIR /home/node/app
-
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
-RUN chown -R node:node /home/node/app
+# Install app dependencies
+RUN npm ci
 
-USER node
+# Bundle app source
+COPY . .
 
-RUN npm install
-
-COPY --chown=node:node . .
+RUN npx prisma migrate dev
 
 EXPOSE 3333 5555 3334
 
-CMD [ "npx", "tsx", "watch", "src/shared/core/server.ts" ]
+CMD npm run dev

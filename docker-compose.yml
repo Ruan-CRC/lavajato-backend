@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     image: nodejs
     container_name: app
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- npx tsx watch src/shared/core/server.ts
+    entrypoint: wait-for rabbitmq:5672 -t 20 -- npm run dev
     restart: unless-stopped
     depends_on:
       db:
