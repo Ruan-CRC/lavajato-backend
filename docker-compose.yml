@@ -16,7 +16,7 @@ services:
       - "${PORT_PRISMA}:5555"
       - "${STDOUT_PORT_WS_SERVER}:3334"
     volumes:
-      - .:/home/node/app
+      - .:/usr/src/app
   
   db:
     image: bitnami/postgresql:latest
