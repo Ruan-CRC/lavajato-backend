@@ -38,7 +38,10 @@ Este é um projeto backend em Node.js que inclui uma API RESTful para interaçã
    sudo chown -R 1001:1001 .docker/postgres_data && sudo chmod -R 755 .docker/postgres_data
 
 ```bash
-   npx prisma prisma migrate dev
+   chmod +x start.sh
+
+```bash
+   docker compose up -d
 ## Endpoints
 // um link para o postman
 ````
