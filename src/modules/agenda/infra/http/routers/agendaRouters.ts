@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { container } from 'tsyringe';
 import asyncHandler from 'express-async-handler';
+import { container } from 'tsyringe';
 import ServicoVeiculoController from '../controller/servicoVeiculoController';
 
-const agendaRouters = Router();
 const agendaController = container.resolve(ServicoVeiculoController);
+const agendaRouters = Router();
 
 agendaRouters.get('/servicos-agendos', asyncHandler(async (req, res) => {
   await agendaController.servicosEmAgendamento(req, res);

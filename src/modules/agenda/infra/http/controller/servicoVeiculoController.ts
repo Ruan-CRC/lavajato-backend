@@ -1,30 +1,17 @@
 import { Request, Response } from 'express';
-import { container, decorators } from 'tsyringe';
+import { decorators } from 'tsyringe';
 import { z } from 'zod';
+import { servicosAgendados, validaAgenda } from '@/modules/agenda/utils/factory';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
 import itIsTypeofThatInterface from '@/shared/infra/helpers/interfaceIsTypeof';
-import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
-import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
 import { amqpInstance } from '@/shared/core/server';
 import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
-import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
-import { AgendaError } from '../../../entities/agenda.d';
-import VeiculoServicosRepository from '../../repositories/veiculo-servicos-repositories';
-
-container.register('ServicoVeiculoInterface', {
-  useClass: VeiculoServicosRepository,
-});
+import { AgendaCreateInputDTO, AgendaError } from '../../../entities/agenda.d';
 
 const { injectable } = decorators;
-const servicosAgendados = container.resolve(ServicosAgendados);
-const addServicosService = container.resolve(AddServicosService);
 
 @injectable()
 export default class ServicoVeiculoController {
-  constructor(
-    private validaAgenda: ValidaAgenda,
-  ) {}
-
   async servicosEmAgendamento(request: Request, response: Response) {
     const allAgendas = await servicosAgendados.servicosAgendados();
 
@@ -48,7 +35,7 @@ export default class ServicoVeiculoController {
       dataInicio: z.string(),
     }), request.body);
 
-    const agendaDadosValidados = await this.validaAgenda.main(request.body);
+    const agendaDadosValidados = await validaAgenda.main(request.body);
 
     if (itIsTypeofThatInterface<AgendaError>(agendaDadosValidados, 'hasError')) {
       throw new BadRequestError({
@@ -61,7 +48,12 @@ export default class ServicoVeiculoController {
       });
     }
 
-    const agenda = await addServicosService.add(request.body);
+    const agenda: AgendaCreateInputDTO = {
+      id: agendaDadosValidados,
+      veiculoId: request.body.veiculoId,
+      servicoIds: request.body.servicoIds,
+      dataInicio: request.body.dataInicio,
+    };
 
     const isPublished = await amqpInstance
       .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, agenda);

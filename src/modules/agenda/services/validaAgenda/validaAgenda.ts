@@ -1,13 +1,14 @@
+import { decorators } from 'tsyringe';
+import { UUID, randomUUID } from 'node:crypto';
 import { AgendaError, AgendaCreateInputDTO } from '../../entities/agenda.d';
 
+const { injectable } = decorators;
+
+@injectable()
 export default class ValidaAgenda {
-  private readonly error: AgendaError;
+  private readonly error: AgendaError = { hasError: false, message: [] };
 
-  constructor() {
-    this.error = { hasError: false, message: [] };
-  }
-
-  async main(props: AgendaCreateInputDTO): Promise<Boolean | AgendaError> {
+  async main(props: AgendaCreateInputDTO): Promise<UUID | AgendaError> {
     const { dataInicio } = props;
 
     const HORARIO_ABRE_LAVAJATO = 8;
@@ -25,6 +26,6 @@ export default class ValidaAgenda {
       return this.error;
     }
 
-    return true;
+    return randomUUID();
   }
 }
