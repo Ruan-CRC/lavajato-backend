@@ -1,5 +1,5 @@
-import { VeiculoInterface } from '../interfaces/veiculoInterface';
-import { VeiculosOutputDTO } from './DTOs/mainFunctions';
+import { VeiculoInterface } from '../../interfaces/veiculoInterface';
+import { VeiculosOutputDTO } from '../DTOs/mainFunctions';
 
 export default class AllVeiculosService {
   constructor(private veiculoInterface: VeiculoInterface) { }

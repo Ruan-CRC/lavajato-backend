@@ -4,7 +4,10 @@ import path from 'node:path';
 
 export default defineConfig({
   test: {
-    // ...
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+    },
   },
   resolve: {
     alias: [

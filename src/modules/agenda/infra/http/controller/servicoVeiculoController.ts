@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { container, inject, injectable } from 'tsyringe';
+import { container, decorators } from 'tsyringe';
 import { z } from 'zod';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
 import itIsTypeofThatInterface from '@/shared/infra/helpers/interfaceIsTypeof';
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
+import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
 import { amqpInstance } from '@/shared/core/server';
 import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
 import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
@@ -14,12 +15,14 @@ container.register('ServicoVeiculoInterface', {
   useClass: VeiculoServicosRepository,
 });
 
+const { injectable } = decorators;
 const servicosAgendados = container.resolve(ServicosAgendados);
+const addServicosService = container.resolve(AddServicosService);
 
 @injectable()
 export default class ServicoVeiculoController {
   constructor(
-    @inject(ValidaAgenda) private validaAgenda: ValidaAgenda,
+    private validaAgenda: ValidaAgenda,
   ) {}
 
   async servicosEmAgendamento(request: Request, response: Response) {
@@ -45,12 +48,12 @@ export default class ServicoVeiculoController {
       dataInicio: z.string(),
     }), request.body);
 
-    const servico = await this.validaAgenda.add(request.body);
+    const agendaDadosValidados = await this.validaAgenda.main(request.body);
 
-    if (itIsTypeofThatInterface<AgendaError>(servico, 'hasError')) {
+    if (itIsTypeofThatInterface<AgendaError>(agendaDadosValidados, 'hasError')) {
       throw new BadRequestError({
         type: 'validation_error',
-        errors: servico.message?.map((message) => ({
+        errors: agendaDadosValidados.message?.map((message) => ({
           title: 'validation_error',
           detail: message,
           instance: 'agenda/create/',
@@ -58,18 +61,18 @@ export default class ServicoVeiculoController {
       });
     }
 
+    const agenda = await addServicosService.add(request.body);
+
     const isPublished = await amqpInstance
-      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, servico);
+      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, agenda);
 
     if (!isPublished) {
       return response.status(400);
     }
 
-    const { id } = servico;
-
     return response.status(200).json({
       message: 'Serviço solicitado!',
-      id,
+      id: agenda.id,
     });
   }
 }

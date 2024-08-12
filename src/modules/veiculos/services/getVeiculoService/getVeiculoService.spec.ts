@@ -1,45 +1,45 @@
 import {
-  describe, it, beforeEach, expect,
+  describe, it, expect, vi,
 } from 'vitest';
 import GetVeiculoService from './getVeiculoService';
 import { VeiculoInterface } from '../../interfaces/veiculoInterface';
 
+const veiculoInterfaceMock: Partial<VeiculoInterface> = {
+  index: vi.fn(),
+};
+
 describe('GetVeiculoService', () => {
-  let getVeiculoService: GetVeiculoService;
-  let mockUsersRepository: jest.Mocked<VeiculoInterface>;
-
-  beforeEach(() => {
-    mockUsersRepository = {
-      index: jest.fn(),
-      all: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+  it('deve retornar o veículo quando encontrado', async () => {
+    const veiculoMock = {
+      id: '1',
+      modelo: 'Fusca',
+      ano: 1960,
     };
-    getVeiculoService = new GetVeiculoService(mockUsersRepository);
+
+    (veiculoInterfaceMock.index as vi.Mock).mockResolvedValue(veiculoMock);
+
+    const veiculoService = new GetVeiculoService(veiculoInterfaceMock as VeiculoInterface);
+
+    const resultado = await veiculoService.get('1');
+
+    expect(resultado).toEqual(veiculoMock);
   });
 
-  it.skip('deve criar um novo veículo com sucesso', async () => {
-    mockUsersRepository.index.mockResolvedValue({
-      id: '1',
-      placa: 'AVF-1245',
-      tipo: 'carro',
-      userId: 1,
-    });
-    const veiculo = await getVeiculoService.get('1');
+  it('deve retornar uma mensagem de erro quando o veículo não for encontrado', async () => {
+    (veiculoInterfaceMock.index as vi.Mock).mockResolvedValue(null);
 
-    expect(veiculo).toBe({
-      id: '1',
-      placa: 'AVF-1245',
-      tipo: 'carro',
-      userId: 1,
-    });
+    const veiculoService = new GetVeiculoService(veiculoInterfaceMock as VeiculoInterface);
+
+    const resultado = await veiculoService.get('1');
+
+    expect(resultado).toBe('veiculo não encontrado');
   });
 
-  it.skip('veiculo já registrado', async () => {
-    mockUsersRepository.index.mockResolvedValue(false);
-    const veiculo = await getVeiculoService.get('1');
+  it('deve lidar com erros ao buscar o veículo', async () => {
+    (veiculoInterfaceMock.index as vi.Mock).mockRejectedValue(new Error('Erro ao buscar veículo'));
 
-    expect(veiculo).toBe('veiculo não encontrado');
+    const veiculoService = new GetVeiculoService(veiculoInterfaceMock as VeiculoInterface);
+
+    await expect(veiculoService.get('1')).rejects.toThrow('Erro ao buscar veículo');
   });
 });

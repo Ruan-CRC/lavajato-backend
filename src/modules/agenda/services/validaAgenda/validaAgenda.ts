@@ -1,30 +1,30 @@
-import dayjs from 'dayjs';
-import { injectable } from 'tsyringe';
-import Agenda from '../../entities/agenda';
-import { AgendaError, AgendaOutput, AgendaCreateInputDTO } from '../../entities/agenda.d';
-import calculaTempoTotalServicos from '@/shared/infra/modules/helpers/calculaTempoTotalServicos';
+import { AgendaError, AgendaCreateInputDTO } from '../../entities/agenda.d';
 
-@injectable()
 export default class ValidaAgenda {
-  async add(props: AgendaCreateInputDTO): Promise<AgendaOutput | AgendaError> {
-    const { veiculoId, servicoIds, dataInicio } = props;
+  private readonly error: AgendaError;
 
-    const tempoTotalServicos = await calculaTempoTotalServicos(servicoIds);
+  constructor() {
+    this.error = { hasError: false, message: [] };
+  }
 
-    const dataFim = new Date(dayjs(dataInicio).minute(tempoTotalServicos).toString());
+  async main(props: AgendaCreateInputDTO): Promise<Boolean | AgendaError> {
+    const { dataInicio } = props;
 
-    const agenda = new Agenda({
-      veiculoId,
-      servicoIds,
-      dataInicio,
-      dataFim,
-    });
+    const HORARIO_ABRE_LAVAJATO = 8;
+    const HORARIO_FECHA_LAVAJATO = 18;
+    const HORA_INICIA_AGENDA = new Date(dataInicio).getHours();
 
-    if (agenda.getError().hasError === true) {
-      const errors = agenda.getError();
-      return errors;
+    if (
+      (HORA_INICIA_AGENDA < HORARIO_ABRE_LAVAJATO) || (HORA_INICIA_AGENDA > HORARIO_FECHA_LAVAJATO)
+    ) {
+      this.error.hasError = true;
+      this.error.message.push('Horário fora do expediente');
     }
 
-    return agenda.getEntidade();
+    if (this.error.hasError === true) {
+      return this.error;
+    }
+
+    return true;
   }
 }
