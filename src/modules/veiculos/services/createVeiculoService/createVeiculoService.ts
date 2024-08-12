@@ -1,5 +1,5 @@
-import { VeiculoInterface } from '../interfaces/veiculoInterface';
-import { VeiculoImputDTO, UserImputDTO } from './DTOs/mainFunctions';
+import { VeiculoInterface } from '../../interfaces/veiculoInterface';
+import { VeiculoImputDTO, UserImputDTO } from '../DTOs/mainFunctions';
 
 export default class CreateVeiculoService {
   constructor(

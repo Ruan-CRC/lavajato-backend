@@ -2,11 +2,11 @@ import { Router } from 'express';
 
 import VeiculoFactory from '@/modules/veiculos/utils/factory';
 
-const router = Router();
+const veiculoRouter = Router();
 const veiculoController = VeiculoFactory.createVeiculoController();
 
-router.post('/', (req, res) => veiculoController.create(req, res));
-router.get('/:id([0-9]|[1-9][0-9]|100)', (req, res) => veiculoController.findById(req, res));
-router.get('/all', (req, res) => veiculoController.all(res));
+veiculoRouter.post('/', (req, res) => veiculoController.create(req, res));
+veiculoRouter.get('/:id([0-9]|[1-9][0-9]|100)', (req, res) => veiculoController.findById(req, res));
+veiculoRouter.get('/all', (req, res) => veiculoController.all(res));
 
-export default router;
+export default veiculoRouter;

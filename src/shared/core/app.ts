@@ -2,14 +2,11 @@
 import express, {
   Request, Response,
 } from 'express';
-
 import cors from 'cors';
 import dotenv from 'dotenv';
-
-import handler from '../infra/modules/api/v1/handler';
+import handlerRouters from '../infra/modules/api/v1/handlerRouters';
 import errorMiddleware from '../infra/middlewares/error';
 
-// Dotenv Config
 dotenv.config();
 
 const corsOptions = {
@@ -43,7 +40,7 @@ class App {
     // Health Check
     this.app.get('/api/v1/healthcheck', (request: Request, response: Response) => response.status(200).json({ Ok: true }));
 
-    this.app.use(handler);
+    this.app.use(handlerRouters);
   }
 }
 

@@ -1,4 +1,4 @@
-import decorators from 'tsyringe';
+import { decorators } from 'tsyringe';
 
 import { ServicoVeiculoInterface } from '../../interfaces/servicoVeiculoInterface';
 
