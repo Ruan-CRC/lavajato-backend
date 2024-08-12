@@ -1,22 +1,23 @@
 import { UUID } from 'node:crypto';
 
-export interface AgendaInput {
-  id?: UUID;
+interface AgendaBase {
   veiculoId: number;
   servicoIds: number[];
   dataInicio: Date;
   dataFim: Date;
 }
 
-export interface AgendaOutput {
+export interface AgendaInput extends AgendaBase {
+  id?: UUID;
+}
+
+export interface AgendaOutput extends AgendaBase {
   id: UUID;
-  veiculoId: number;
-  servicoIds: number[];
-  dataInicio: Date;
-  dataFim: Date;
 }
 
 export type AgendaError = {
   hasError: boolean;
   message?: string[];
 };
+
+export interface AgendaCreateInputDTO extends Omit<AgendaInput, 'dataFim'> {}

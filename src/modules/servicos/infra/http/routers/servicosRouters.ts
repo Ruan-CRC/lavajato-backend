@@ -2,10 +2,10 @@ import { Router } from 'express';
 
 import ServicoFactory from '../../../utils/factory';
 
-const router = Router();
+const servicosRouter = Router();
 const servicoController = ServicoFactory.createServicoController();
 
-router.post('/', (req, res) => servicoController.create(req, res));
-router.get('/all', (req, res) => servicoController.all(res));
+servicosRouter.post('/', (req, res) => servicoController.create(req, res));
+servicosRouter.get('/all', (req, res) => servicoController.all(res));
 
-export default router;
+export default servicosRouter;

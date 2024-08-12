@@ -1,8 +1,8 @@
 import VeiculoController from '../infra/http/controller/veiculoController';
-import CreateVeiculoService from '../services/createVeiculoService';
+import CreateVeiculoService from '../services/createVeiculoService/createVeiculoService';
 import VeiculoRepository from '../infra/repositories/veiculoRepositorie';
-import GetVeiculoService from '../services/getVeiculoService';
-import AllVeiculosService from '../services/allVeiculosService';
+import GetVeiculoService from '../services/getVeiculoService/getVeiculoService';
+import AllVeiculosService from '../services/allVeiculosService/allVeiculosService';
 
 export default class VeiculoFactory {
   static createVeiculoController() {

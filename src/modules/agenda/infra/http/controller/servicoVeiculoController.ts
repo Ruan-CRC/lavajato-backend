@@ -1,30 +1,29 @@
 import { Request, Response } from 'express';
-
+import { container, inject, injectable } from 'tsyringe';
 import { z } from 'zod';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
 import itIsTypeofThatInterface from '@/shared/infra/helpers/interfaceIsTypeof';
-import UpdateServicoService from '@/modules/agenda/services/updateServicos/updateServicoService';
-import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
 import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
-
 import { amqpInstance } from '@/shared/core/server';
 import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
 import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
 import { AgendaError } from '../../../entities/agenda.d';
+import VeiculoServicosRepository from '../../repositories/veiculo-servicos-repositories';
 
+container.register('ServicoVeiculoInterface', {
+  useClass: VeiculoServicosRepository,
+});
+
+const servicosAgendados = container.resolve(ServicosAgendados);
+
+@injectable()
 export default class ServicoVeiculoController {
-  private validaAgenda: ValidaAgenda;
-
   constructor(
-    private updateServico: UpdateServicoService,
-    private addServicoService: AddServicosService,
-    private servicosAgendados: ServicosAgendados,
-  ) {
-    this.validaAgenda = new ValidaAgenda();
-  }
+    @inject(ValidaAgenda) private validaAgenda: ValidaAgenda,
+  ) {}
 
   async servicosEmAgendamento(request: Request, response: Response) {
-    const allAgendas = await this.servicosAgendados.servicosAgendados();
+    const allAgendas = await servicosAgendados.servicosAgendados();
 
     if (allAgendas.length === 0) {
       throw new NotFoundError({
@@ -37,16 +36,6 @@ export default class ServicoVeiculoController {
     }
 
     return response.status(200).json(allAgendas);
-  }
-
-  async update(request: Request, response: Response) {
-    const {
-      idVeiculo, idServico, dataInicio, dataFim,
-    } = request.body;
-
-    const servico = await this.updateServico.update(idVeiculo, idServico, dataInicio, dataFim);
-
-    return response.status(200).json({ servico });
   }
 
   async addServico(request: Request, response: Response) {

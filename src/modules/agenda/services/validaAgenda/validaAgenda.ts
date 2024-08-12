@@ -1,13 +1,12 @@
-import { injectable } from 'tsyringe';
 import dayjs from 'dayjs';
+import { injectable } from 'tsyringe';
 import Agenda from '../../entities/agenda';
-import { CreateInputDTO } from '../addServicos/addServicos.dto';
-import { AgendaError, AgendaOutput } from '../../entities/agenda.d';
+import { AgendaError, AgendaOutput, AgendaCreateInputDTO } from '../../entities/agenda.d';
 import calculaTempoTotalServicos from '@/shared/infra/modules/helpers/calculaTempoTotalServicos';
 
 @injectable()
 export default class ValidaAgenda {
-  async add(props: CreateInputDTO): Promise<AgendaOutput | AgendaError> {
+  async add(props: AgendaCreateInputDTO): Promise<AgendaOutput | AgendaError> {
     const { veiculoId, servicoIds, dataInicio } = props;
 
     const tempoTotalServicos = await calculaTempoTotalServicos(servicoIds);
