@@ -17,6 +17,12 @@ services:
       - "${STDOUT_PORT_WS_SERVER}:3334"
     volumes:
       - .:/usr/src/app
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 300M
   
   db:
     image: bitnami/postgresql:latest
@@ -52,14 +58,10 @@ services:
     volumes:
       - .docker/rabbitmq/data:/var/lib/rabbitmq
       - .docker/rabbitmq/log:/var/log/rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 300M
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    ports:
-      - "${PORT_PGADMIN}:80"
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-    volumes:
-      - .docker/pgadmin_data:/var/lib/pgadmin

@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import fs from 'fs/promises';
 
 const horasEntreServicos = 1;
-const QUANTIDADE_SERVICOS = 15000;
+const QUANTIDADE_SERVICOS = 5000;
 const veiculosInMemory = [];
 const servicosInMemory = [];
 

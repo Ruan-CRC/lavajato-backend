@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import { decorators } from 'tsyringe';
 import { z } from 'zod';
-import { servicosAgendados, validaAgenda } from '@/modules/agenda/utils/factory';
+import { servicosAgendados } from '@/modules/agenda/utils/factory';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
 import itIsTypeofThatInterface from '@/shared/infra/helpers/interfaceIsTypeof';
 import { amqpInstance } from '@/shared/core/server';
 import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
 import { AgendaCreateInputDTO, AgendaError } from '../../../entities/agenda.d';
+import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
 
 const { injectable } = decorators;
 
@@ -35,7 +36,8 @@ export default class ServicoVeiculoController {
       dataInicio: z.string(),
     }), request.body);
 
-    const agendaDadosValidados = await validaAgenda.main(request.body);
+    const valida = new ValidaAgenda();
+    const agendaDadosValidados = valida.main(request.body);
 
     if (itIsTypeofThatInterface<AgendaError>(agendaDadosValidados, 'hasError')) {
       throw new BadRequestError({
