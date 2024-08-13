@@ -9,7 +9,11 @@ import WebsocketServer from '@/shared/core/websocketServer';
 const websocketInstance = WebsocketServer.Instance;
 const amqpInstance = AmqpLibService.Instance;
 const agendaInstance = new AgendaControllerWS();
-const porta = process.env.PORT_API || 3333;
+let porta = process.env.PORT_API || 3333;
+
+if (process.env.IS_TEST === 'true') {
+  porta = 0;
+}
 
 app.listen(porta, async () => {
   console.clear();
@@ -23,4 +27,4 @@ app.listen(porta, async () => {
 });
 app.use(errorMiddleware);
 
-export { websocketInstance, amqpInstance };
+export { websocketInstance, amqpInstance, app };

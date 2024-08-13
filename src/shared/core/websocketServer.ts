@@ -10,7 +10,12 @@ class WebsocketServer {
   private socketInstance: Socket;
 
   private constructor() {
-    const ioServer = new Server(Number(process.env.PORT_WS_SERVER), {
+    let port = Number(process.env.PORT_WS_SERVER);
+    if (process.env.IS_TEST === 'true') {
+      port = 0;
+    }
+
+    const ioServer = new Server(port, {
       cors: {
         origin: process.env.CORS_CLIENT_URL,
       },

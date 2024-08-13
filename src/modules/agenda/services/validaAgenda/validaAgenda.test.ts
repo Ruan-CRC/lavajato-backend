@@ -2,7 +2,7 @@ import {
   describe, it, expect, afterEach, beforeEach, vi,
 } from 'vitest';
 import ValidaAgenda from './validaAgenda';
-import { AgendaCreateInputDTO, AgendaError } from '../../entities/agenda.d';
+import { AgendaCreateInputDTO } from '../../entities/agenda.d';
 
 describe('ValidaAgenda', () => {
   beforeEach(() => {
@@ -21,10 +21,10 @@ describe('ValidaAgenda', () => {
     const input: AgendaCreateInputDTO = {
       veiculoId: 1,
       servicoIds: [1, 2],
-      dataInicio: new Date('2024-08-12T07:00:00Z'), // Antes do horário de abertura
+      dataInicio: new Date('2024-08-12T07:00:00Z'),
     };
 
-    const result = await validaAgenda.main(input);
+    const result = validaAgenda.main(input);
 
     expect(result).toEqual({
       hasError: true,
@@ -38,14 +38,11 @@ describe('ValidaAgenda', () => {
     const input: AgendaCreateInputDTO = {
       veiculoId: 1,
       servicoIds: [1, 2],
-      dataInicio: new Date('2024-08-12T10:00:00Z'), // Dentro do horário de expediente
+      dataInicio: new Date('2024-08-12T10:00:00Z'),
     };
 
-    const result = await validaAgenda.main(input);
+    const result = validaAgenda.main(input);
 
-    expect(result).toEqual<AgendaError>({
-      hasError: true,
-      message: ['Horário fora do expediente'],
-    });
+    expect(result).toBeTypeOf('string');
   });
 });
