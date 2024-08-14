@@ -13,7 +13,7 @@ export default class ValidaAgenda {
 
     const dataFim = await this.calculateDataFimServicos(props.dataInicio, props.servicoIds);
 
-    this.temFuncionarios(props.dataInicio, dataFim);
+    this.temFuncionarios(new Date(props.dataInicio), dataFim);
 
     return randomUUID();
   }
