@@ -3,10 +3,9 @@ import { decorators } from 'tsyringe';
 import { z } from 'zod';
 import { servicosAgendados } from '@/modules/agenda/utils/factory';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
-import itIsTypeofThatInterface from '@/shared/infra/helpers/interfaceIsTypeof';
 import { amqpInstance } from '@/shared/core/server';
 import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
-import { AgendaCreateInputDTO, AgendaError } from '../../../entities/agenda.d';
+import { AgendaCreateInputDTO } from '../../../entities/agenda.d';
 import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
 
 const { injectable } = decorators;
@@ -37,13 +36,13 @@ export default class ServicoVeiculoController {
     }), request.body);
 
     const valida = new ValidaAgenda();
-    const agendaDadosValidados = valida.main(request.body);
+    const agendaDadosValidados = await valida.main(request.body);
 
-    if (itIsTypeofThatInterface<AgendaError>(agendaDadosValidados, 'hasError')) {
+    if (valida.error.hasError === true) {
       throw new BadRequestError({
         type: 'validation_error',
-        errors: agendaDadosValidados.message?.map((message) => ({
-          title: 'validation_error',
+        errors: valida.error.message?.map((message) => ({
+          title: 'dados inválidos',
           detail: message,
           instance: 'agenda/create/',
         })) || [],

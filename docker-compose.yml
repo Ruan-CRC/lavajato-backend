@@ -65,3 +65,14 @@ services:
         reservations:
           memory: 300M
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - "${PORT_PGADMIN}:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - .docker/pgadmin_data:/var/lib/pgadmin
+
