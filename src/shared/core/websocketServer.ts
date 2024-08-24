@@ -1,6 +1,8 @@
 import { Server, Socket } from 'socket.io';
-import agendaHandler from '../services/websocket/handlers/agendaHandler';
 // import main from '../infra/prisma/seed/seed';
+import { createAdapter } from '@socket.io/redis-streams-adapter';
+import { Redis } from 'ioredis';
+import agendaHandler from '../services/websocket/handlers/agendaHandler';
 
 class WebsocketServer {
   private static instance: WebsocketServer;
@@ -10,14 +12,23 @@ class WebsocketServer {
   private socketInstance: Socket;
 
   private constructor() {
+    const redisClient = new Redis(6379, 'redis-ws');
+
     let port = Number(process.env.PORT_WS_SERVER);
     if (process.env.IS_TEST === 'true') {
       port = 0;
     }
 
     const ioServer = new Server(port, {
+      adapter: createAdapter(redisClient),
+      connectionStateRecovery: {
+        maxDisconnectionDuration: 3000,
+        skipMiddlewares: false,
+      },
       cors: {
-        origin: process.env.CORS_CLIENT_URL,
+        origin: ['http://localhost:5173', 'http://localhost:4173', 'https://k6.io/'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        credentials: true,
       },
     });
 

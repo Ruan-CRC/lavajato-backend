@@ -32,11 +32,17 @@ export default class ServicoVeiculoController {
     validaDataWhitSchemaZod(z.object({
       veiculoId: z.number(),
       servicoIds: z.array(z.number()),
-      dataInicio: z.string(),
+      dataInicio: z.number(),
     }), request.body);
 
+    const payload = {
+      veiculoId: request.body.veiculoId,
+      servicoIds: request.body.servicoIds,
+      dataInicio: new Date(request.body.dataInicio),
+    };
+
     const valida = new ValidaAgenda();
-    const agendaDadosValidados = await valida.main(request.body);
+    const agendaDadosValidados = await valida.main(payload);
 
     if (valida.error.hasError === true) {
       throw new BadRequestError({
@@ -51,9 +57,9 @@ export default class ServicoVeiculoController {
 
     const agenda: AgendaCreateInputDTO = {
       id: agendaDadosValidados,
-      veiculoId: request.body.veiculoId,
-      servicoIds: request.body.servicoIds,
-      dataInicio: request.body.dataInicio,
+      veiculoId: payload.veiculoId,
+      servicoIds: payload.servicoIds,
+      dataInicio: payload.dataInicio,
     };
 
     const isPublished = await amqpInstance
