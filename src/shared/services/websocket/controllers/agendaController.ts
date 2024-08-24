@@ -6,7 +6,7 @@ import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
 
 export default class AgendaControllerWS {
   async createAgenda(payload: string) {
-    // const socketInstance = websocketInstance.socket;
+    const socketInstance = websocketInstance.socket;
     const { ioInstance } = websocketInstance;
     const payloadJson = JSON.parse(payload);
 
@@ -22,7 +22,7 @@ export default class AgendaControllerWS {
     await valida.temFuncionarios(props.dataInicio, dataFim);
 
     if (valida.error.hasError === true) {
-      // socketInstance.to(socketInstance.id).emit('agenda:error', valida.error);
+      socketInstance.to(socketInstance.id).emit('agenda:error', valida.error);
       return '';
     }
 
