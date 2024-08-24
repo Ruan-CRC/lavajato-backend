@@ -1,15 +1,19 @@
-import { Request } from 'express';
 import { z } from 'zod';
 
 type Schema = z.ZodObject<any, any>;
 type ParserOutput = boolean | z.ZodError<any> | z.ZodIssue[];
 
-function validaDataWhitSchemaZod(schema: Schema, data: Request): ParserOutput {
-  const { error } = schema.parse(data);
-  if (error) {
-    return error.errors;
+function validaDataWhitSchemaZod(schema: Schema, data: any): ParserOutput {
+  try {
+    schema.parse(data);
+    return true;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return error.errors;
+    }
+    // Return false for unexpected errors
+    return false;
   }
-  return true;
 }
 
 export default validaDataWhitSchemaZod;

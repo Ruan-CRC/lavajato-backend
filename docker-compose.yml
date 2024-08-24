@@ -5,19 +5,42 @@ services:
       dockerfile: Dockerfile
     image: nodejs
     container_name: app
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- npx tsx watch src/shared/core/server.ts
+    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.sh
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     env_file: .env
-    ports:
-      - "${STDOUT_PORT_API}:3333"
-      - "${PORT_PRISMA}:5555"
-      - "${STDOUT_PORT_WS_SERVER}:3334"
     volumes:
-      - .:/home/node/app
-  
+      - .:/usr/src/app
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 300M
+
+  app-01:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nodejs
+    container_name: app-01
+    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.sh
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    volumes:
+      - .:/usr/src/app
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+        reservations:
+          memory: 300M
+
   db:
     image: bitnami/postgresql:latest
     container_name: db
@@ -52,14 +75,27 @@ services:
     volumes:
       - .docker/rabbitmq/data:/var/lib/rabbitmq
       - .docker/rabbitmq/log:/var/log/rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservations:
+          memory: 300M
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    ports:
-      - "${PORT_PGADMIN}:80"
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+  nginx:
+    image: nginx:alpine
     volumes:
-      - .docker/pgadmin_data:/var/lib/pgadmin
+      - .docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - .docker/nginx/data:/var/log/nginx/
+    ports:
+      - "${STDOUT_PORT_API}:80"
+    depends_on:
+      - app
+
+  redis-ws:
+    container_name: redis-ws
+    image: redis:latest
+    volumes:
+      - .docker/redis/data:/usr/local/etc/redis
+    ports:
+      - 6379

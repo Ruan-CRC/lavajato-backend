@@ -17,6 +17,24 @@ model User {
   veiculos Veiculo[]
 }
 
+model Funcionario {
+  id       Int      @id @default(autoincrement())
+  cpf      String   @unique
+  email    String?  @unique
+  password String
+  telefone String?
+  endereco String?
+  funcaoId Int
+  funcao   Funcao   @relation(fields: [funcaoId], references: [id])
+  agendas  Agenda[]
+}
+
+model Funcao {
+  id          Int           @id @default(autoincrement())
+  nome        String        @unique
+  funcionario Funcionario[]
+}
+
 model Veiculo {
   id            Int         @id @default(autoincrement())
   placa         String      @unique
@@ -37,12 +55,14 @@ model Servico {
 }
 
 model Agenda {
-  id         String    @id @default(uuid())
-  dataInicio DateTime  @unique
-  dataFim    DateTime
-  servicos   Servico[]
-  veiculoId  Int
-  veiculo    Veiculo   @relation(fields: [veiculoId], references: [id])
+  id            String      @id @default(uuid())
+  dataInicio    DateTime
+  dataFim       DateTime
+  servicos      Servico[]
+  veiculoId     Int
+  veiculo       Veiculo     @relation(fields: [veiculoId], references: [id])
+  funcionarioId Int
+  funcionario   Funcionario @relation(fields: [funcionarioId], references: [id])
 
   @@map("veiculos_servicos")
 }

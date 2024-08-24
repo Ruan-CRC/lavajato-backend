@@ -1,4 +1,4 @@
-import { VeiculoInterface } from '../interfaces/veiculoInterface';
+import { VeiculoInterface } from '../../interfaces/veiculoInterface';
 
 export default class GetVeiculoService {
   constructor(private veiculoInterface: VeiculoInterface) { }

@@ -6,6 +6,7 @@ import prisma from '@/shared/infra/prisma/prisma';
 import getStartOfToday from '@/shared/infra/helpers/zeroHoursToday';
 
 import { AgendaOutput } from '../../entities/agenda.d';
+import temFuncionarioDisponivel from '@/shared/infra/modules/helpers/temFuncionarioDisponivel';
 
 export default class VeiculoServicosRepository implements ServicoVeiculoInterface {
   async getServicosEmAgendamento(): Promise<any[]> {
@@ -72,10 +73,16 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
     };
   }
 
-  async addServicos(props: AddServicoInput): Promise<AgendaOutput> {
+  async addServicos(props: AddServicoInput): Promise<AgendaOutput | string> {
     const {
       id, veiculoId, servicoIds, dataInicio, dataFim,
     } = props;
+
+    const funcioriosIds = await temFuncionarioDisponivel(dataInicio, dataFim);
+
+    if (funcioriosIds.length === 0) {
+      return 'Não tem funcionario';
+    }
 
     const agenda = await prisma.agenda.create({
       data: {
@@ -89,6 +96,9 @@ export default class VeiculoServicosRepository implements ServicoVeiculoInterfac
         },
         servicos: {
           connect: servicoIds.map((servicoId) => ({ id: servicoId })),
+        },
+        funcionario: {
+          connect: { id: funcioriosIds[0] },
         },
       },
     });

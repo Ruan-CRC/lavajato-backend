@@ -1,42 +1,41 @@
 import { Socket } from 'socket.io';
-import { container } from 'tsyringe';
-import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
-import VeiculoServicosRepository from '@/modules/agenda/infra/repositories/veiculo-servicos-repositories';
-import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
-import { ServicoVeiculoInterface } from '@/modules/agenda/interfaces/servicoVeiculoInterface';
 import { websocketInstance } from '@/shared/core/server';
-import { AgendaOutput } from '../../../../modules/agenda/entities/agenda.d';
-
-container.register<ServicoVeiculoInterface>('ServicoVeiculoInterface', {
-  useClass: VeiculoServicosRepository,
-});
-
-const addServicosService = container.resolve(AddServicosService);
-const servicosAgendados = container.resolve(ServicosAgendados);
+import { AgendaCreateInputDTO } from '../../../../modules/agenda/entities/agenda.d';
+import { addServicosService, servicosAgendados } from '@/modules/agenda/utils/factory';
+import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
 
 export default class AgendaControllerWS {
   async createAgenda(payload: string) {
-    const socketInstance = websocketInstance.ioInstance;
+    // const socketInstance = websocketInstance.socket;
+    const { ioInstance } = websocketInstance;
     const payloadJson = JSON.parse(payload);
 
-    const props: AgendaOutput = {
+    const props: AgendaCreateInputDTO = {
       id: payloadJson.id,
       veiculoId: payloadJson.veiculoId,
       servicoIds: payloadJson.servicoIds,
-      dataInicio: payloadJson.dataInicio,
-      dataFim: payloadJson.dataFim,
+      dataInicio: new Date(payloadJson.dataInicio),
     };
+
+    const valida = new ValidaAgenda();
+    const dataFim = await valida.calculateDataFimServicos(props.dataInicio, props.servicoIds);
+    await valida.temFuncionarios(props.dataInicio, dataFim);
+
+    if (valida.error.hasError === true) {
+      // socketInstance.to(socketInstance.id).emit('agenda:error', valida.error);
+      return '';
+    }
 
     const result = await addServicosService.add(props);
 
-    socketInstance.emit('agenda:create', result);
+    ioInstance.emit('agenda:create', result);
   }
 
   enviarAgendas = async (socket: Socket) => {
     try {
       const result = await servicosAgendados.servicosAgendados();
 
-      socket.emit('agenda:all', result);
+      socket.broadcast.emit('user joined', result);
     } catch (error) {
       console.log(error);
     }

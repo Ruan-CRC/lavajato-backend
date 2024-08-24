@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '@/shared/infra/prisma/prisma';
 
-import CreateVeiculoService from '@/modules/veiculos/services/createVeiculoService';
-import GetVeiculoService from '@/modules/veiculos/services/getVeiculoService';
-import AllVeiculosService from '@/modules/veiculos/services/allVeiculosService';
+import CreateVeiculoService from '@/modules/veiculos/services/createVeiculoService/createVeiculoService';
+import GetVeiculoService from '@/modules/veiculos/services/getVeiculoService/getVeiculoService';
+import AllVeiculosService from '@/modules/veiculos/services/allVeiculosService/allVeiculosService';
 
 export default class VeiculoController {
   constructor(

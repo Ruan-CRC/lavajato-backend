@@ -1,30 +1,19 @@
 import { Request, Response } from 'express';
-
+import { decorators } from 'tsyringe';
 import { z } from 'zod';
+import { servicosAgendados } from '@/modules/agenda/utils/factory';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
-import itIsTypeofThatInterface from '@/shared/infra/helpers/interfaceIsTypeof';
-import UpdateServicoService from '@/modules/agenda/services/updateServicos/updateServicoService';
-import AddServicosService from '@/modules/agenda/services/addServicos/addServicos';
-import ServicosAgendados from '@/modules/agenda/services/servicosAgendados/servicosAgendados';
-
 import { amqpInstance } from '@/shared/core/server';
 import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
+import { AgendaCreateInputDTO } from '../../../entities/agenda.d';
 import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
-import { AgendaError } from '../../../entities/agenda.d';
 
+const { injectable } = decorators;
+
+@injectable()
 export default class ServicoVeiculoController {
-  private validaAgenda: ValidaAgenda;
-
-  constructor(
-    private updateServico: UpdateServicoService,
-    private addServicoService: AddServicosService,
-    private servicosAgendados: ServicosAgendados,
-  ) {
-    this.validaAgenda = new ValidaAgenda();
-  }
-
   async servicosEmAgendamento(request: Request, response: Response) {
-    const allAgendas = await this.servicosAgendados.servicosAgendados();
+    const allAgendas = await servicosAgendados.servicosAgendados();
 
     if (allAgendas.length === 0) {
       throw new NotFoundError({
@@ -39,48 +28,50 @@ export default class ServicoVeiculoController {
     return response.status(200).json(allAgendas);
   }
 
-  async update(request: Request, response: Response) {
-    const {
-      idVeiculo, idServico, dataInicio, dataFim,
-    } = request.body;
-
-    const servico = await this.updateServico.update(idVeiculo, idServico, dataInicio, dataFim);
-
-    return response.status(200).json({ servico });
-  }
-
   async addServico(request: Request, response: Response) {
     validaDataWhitSchemaZod(z.object({
       veiculoId: z.number(),
       servicoIds: z.array(z.number()),
-      dataInicio: z.string(),
+      dataInicio: z.number(),
     }), request.body);
 
-    const servico = await this.validaAgenda.add(request.body);
+    const payload = {
+      veiculoId: request.body.veiculoId,
+      servicoIds: request.body.servicoIds,
+      dataInicio: new Date(request.body.dataInicio),
+    };
 
-    if (itIsTypeofThatInterface<AgendaError>(servico, 'hasError')) {
+    const valida = new ValidaAgenda();
+    const agendaDadosValidados = await valida.main(payload);
+
+    if (valida.error.hasError === true) {
       throw new BadRequestError({
         type: 'validation_error',
-        errors: servico.message?.map((message) => ({
-          title: 'validation_error',
+        errors: valida.error.message?.map((message) => ({
+          title: 'dados inválidos',
           detail: message,
           instance: 'agenda/create/',
         })) || [],
       });
     }
 
+    const agenda: AgendaCreateInputDTO = {
+      id: agendaDadosValidados,
+      veiculoId: payload.veiculoId,
+      servicoIds: payload.servicoIds,
+      dataInicio: payload.dataInicio,
+    };
+
     const isPublished = await amqpInstance
-      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, servico);
+      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, agenda);
 
     if (!isPublished) {
       return response.status(400);
     }
 
-    const { id } = servico;
-
     return response.status(200).json({
       message: 'Serviço solicitado!',
-      id,
+      id: agenda.id,
     });
   }
 }

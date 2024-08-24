@@ -1,7 +1,9 @@
-import decorators from 'tsyringe';
+import { decorators } from 'tsyringe';
+import dayjs from 'dayjs';
 import { ServicoVeiculoInterface } from '../../interfaces/servicoVeiculoInterface';
 import Agenda from '../../entities/agenda';
-import { AgendaOutput } from '../../entities/agenda.d';
+import { AgendaOutput, AgendaCreateInputDTO } from '../../entities/agenda.d';
+import calculaTempoTotalServicos from '@/shared/infra/modules/helpers/calculaTempoTotalServicos';
 
 const { injectable, inject } = decorators;
 
@@ -11,10 +13,14 @@ export default class AddServicosService {
     @inject('ServicoVeiculoInterface') private servicoVeiculoInterface: ServicoVeiculoInterface,
   ) { }
 
-  async add(props: AgendaOutput): Promise<AgendaOutput> {
+  async add(props: AgendaCreateInputDTO): Promise<AgendaOutput | string> {
     const {
-      id, veiculoId, servicoIds, dataInicio, dataFim,
+      id, veiculoId, servicoIds, dataInicio,
     } = props;
+
+    const tempoTotalServicos = await calculaTempoTotalServicos(servicoIds);
+
+    const dataFim = new Date(dayjs(dataInicio).minute(tempoTotalServicos).toString());
 
     const agenda = new Agenda({
       id,
@@ -26,6 +32,11 @@ export default class AddServicosService {
 
     const servico = await this.servicoVeiculoInterface
       .addServicos(agenda.getEntidade());
+
+    if (typeof servico === 'string') {
+      return servico;
+    }
+
     return servico;
   }
 }
