@@ -16,7 +16,6 @@ if (process.env.IS_TEST === 'true') {
 }
 
 app.listen(porta, async () => {
-  console.clear();
   console.log(`Server running on port ${porta}`);
 
   await amqpInstance.connect();

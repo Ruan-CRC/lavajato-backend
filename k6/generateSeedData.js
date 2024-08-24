@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import fs from 'fs/promises';
 
 const horasEntreServicos = 1;
-const QUANTIDADE_SERVICOS = 5000;
+const QUANTIDADE_SERVICOS = 7000;
 const veiculosInMemory = [];
 const servicosInMemory = [];
 
@@ -22,6 +22,8 @@ async function main() {
   await seed.$resetDatabase();
 
   await seed.tipoVeiculo((x) => x(3));
+  await seed.funcao((x) => x(1));
+  await seed.funcionario((x) => x(3));
   await seed.user((x) => x(5, (ctx) => ({
     idUser: randomUUID(),
     email: copycat.email(ctx.seed, {
@@ -31,7 +33,9 @@ async function main() {
   })));
   const { veiculo } = await seed.veiculo((x) => x(8));
   const { servico } = await seed.servico((x) => x(3));
-  await seed.servicoMetadados((x) => x(12));
+  await seed.servicoMetadados((x) => x(5, {
+    tempo: 60,
+  }));
 
   veiculosInMemory.push(...veiculo);
   servicosInMemory.push(...servico);
@@ -47,10 +51,19 @@ async function main() {
     const veiculoId = veiculosInMemory[getRandomIntInRange(0, veiculosInMemory.length - 1)];
     const servicoId = servicosInMemory[getRandomIntInRange(0, servicosInMemory.length - 1)];
 
+    const hora = date.getHours();
+    const horarioPermitido = hora >= 8 && hora < 18;
+
+    let expectedStatus;
+
+    // eslint-disable-next-line prefer-const
+    expectedStatus = horarioPermitido ? 200 : 400;
+
     agendamentos.push({
       veiculoId: veiculoId.id,
       servicoIds: [servicoId.id],
       dataInicio: new Date(formattedDate),
+      expectedStatus,
     });
 
     agendamento = new Date(agendamento).valueOf() + horasEntreServicos * 60 * 60 * 1000;

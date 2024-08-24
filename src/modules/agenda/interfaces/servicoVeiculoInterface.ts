@@ -29,6 +29,6 @@ export interface ServicoVeiculoInterface {
   updateServico(
     idServico: string, dataInicio?: string, dataFim?: string
   ): Promise<Agenda>
-  addServicos(props: AddServicoInput): Promise<AgendaOutput>
+  addServicos(props: AddServicoInput): Promise<AgendaOutput | string>
   getServicosEmAgendamento(): Promise<AgendasAll[]>
 }

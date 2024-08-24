@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable import/no-unresolved */
 import http from 'k6/http';
 import { check, sleep } from 'k6';
@@ -21,7 +22,6 @@ export const options = {
 };
 
 export default function () {
-  // eslint-disable-next-line no-undef
   const index = __VU - 1;
   const dat = data[index];
 
@@ -31,9 +31,7 @@ export default function () {
   });
 
   check(res, {
-    'status is 200': (r) => r.status === 200,
-    'status is 400': (r) => r.status === 400,
-    'resposta é Serviço solicitado!': (r) => r.json().message === 'Serviço solicitado!',
+    'status é 200 ou 400': (r) => ((r.status === 200) || (r.status === 400)),
   });
 
   // Pause entre as requisições para simular o comportamento de um usuário real

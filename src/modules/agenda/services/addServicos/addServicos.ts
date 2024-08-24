@@ -13,7 +13,7 @@ export default class AddServicosService {
     @inject('ServicoVeiculoInterface') private servicoVeiculoInterface: ServicoVeiculoInterface,
   ) { }
 
-  async add(props: AgendaCreateInputDTO): Promise<AgendaOutput> {
+  async add(props: AgendaCreateInputDTO): Promise<AgendaOutput | string> {
     const {
       id, veiculoId, servicoIds, dataInicio,
     } = props;
@@ -32,6 +32,11 @@ export default class AddServicosService {
 
     const servico = await this.servicoVeiculoInterface
       .addServicos(agenda.getEntidade());
+
+    if (typeof servico === 'string') {
+      return servico;
+    }
+
     return servico;
   }
 }

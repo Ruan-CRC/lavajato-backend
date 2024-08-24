@@ -11,14 +11,12 @@ export default class ValidaAgenda {
   async main(props: AgendaCreateInputDTO): Promise<UUID> {
     this.estaNoHorarioDeFuncionamento(props.dataInicio);
 
-    const dataFim = await this.calculateDataFimServicos(props.dataInicio, props.servicoIds);
-
-    this.temFuncionarios(new Date(props.dataInicio), dataFim);
+    await this.calculateDataFimServicos(props.dataInicio, props.servicoIds);
 
     return randomUUID();
   }
 
-  private estaNoHorarioDeFuncionamento(dataInicio: Date): void {
+  estaNoHorarioDeFuncionamento(dataInicio: Date): void {
     const HORARIO_ABRE_LAVAJATO = 8;
     const HORARIO_FECHA_LAVAJATO = 18;
     const HORA_INICIA_AGENDA = new Date(dataInicio).getHours();
@@ -31,7 +29,7 @@ export default class ValidaAgenda {
     }
   }
 
-  private async temFuncionarios(dataInicio: Date, dataFim: Date): Promise<void> {
+  async temFuncionarios(dataInicio: Date, dataFim: Date): Promise<void> {
     const funcionariosDisponiveis = await temFuncionarioDisponivel(dataInicio, dataFim);
 
     if (funcionariosDisponiveis.length === 0) {
@@ -40,7 +38,7 @@ export default class ValidaAgenda {
     }
   }
 
-  private async calculateDataFimServicos(dataInicio: Date, servicoIds: number[]): Promise<Date> {
+  async calculateDataFimServicos(dataInicio: Date, servicoIds: number[]): Promise<Date> {
     const tempoTotalServicos = await calculaTempoTotalServicos(servicoIds);
 
     return new Date(dayjs(dataInicio).minute(tempoTotalServicos).toString());

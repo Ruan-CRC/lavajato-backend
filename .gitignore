@@ -42,6 +42,8 @@ yarn.lock
 
 .docker/postgres_data
 .docker/pgadmin_data
+.docker/nginx/data/*
+.docker/nginx/data
 tmp.txt
 .docker/rabbitmq/*
 .docker/rabbitmq
