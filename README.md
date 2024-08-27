@@ -26,7 +26,7 @@ cp .env.example .env
 3.  **Criar pastas para o Postegres e pgAdmin**
 
 ```bash
-mkdir .docker/postgres_data && mkdir .docker/pgadmin_data
+mkdir .docker/postgres_data
 ```
 
 4.  **Ceder as permissões necessárias**
@@ -50,6 +50,7 @@ docker compose up -d
 [Postman workspace](https://www.postman.com/rcrc00/workspace/lavajato-pb/collection/31135629-22f63187-f8e8-47f9-8c33-1c32dc590515?action=share&creator=31135629)
 
 ## 📸 Screenshots
+
 <img src="https://media.licdn.com/dms/image/v2/D4D22AQGJjca5ilC6Ug/feedshare-shrink_1280/feedshare-shrink_1280/0/1724435640594?e=1727308800&v=beta&t=QdJbW9-WTHd9VjNs3IrIZS9nI-cpoowthlVvQKr4Lp4" alt="10.000 request em 1 min">
 
 <img src="https://media.licdn.com/dms/image/v2/D4D22AQGoMgQIELu6mw/feedshare-shrink_1280/feedshare-shrink_1280/0/1724435640708?e=1727308800&v=beta&t=zb4lrsfkdrvVQNh8-MzUm33VwEA2irvswT35i1-P_8w">
