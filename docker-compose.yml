@@ -6,7 +6,7 @@ services:
     image: nodejs
     container_name: app
     env_file: .env
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.sh
+    entrypoint: wait-for rabbitmq:5672 -t 60 -- ./start.sh
     restart: unless-stopped
     depends_on:
       db:
