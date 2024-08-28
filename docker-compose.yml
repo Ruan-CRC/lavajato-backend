@@ -13,7 +13,7 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl --location 'localhost:3333/api/v1/healthcheck'"]
-      interval: 10s
+      interval: 12s
       retries: 25
       start_period: 30s
       timeout: 5s
@@ -33,7 +33,7 @@ services:
     image: nodejs
     container_name: app-01
     env_file: .env
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.sh
+    entrypoint: wait-for rabbitmq:5672 -t 60 -- ./start.sh
     restart: unless-stopped
     depends_on:
       db:

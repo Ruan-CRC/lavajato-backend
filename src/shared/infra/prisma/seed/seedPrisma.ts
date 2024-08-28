@@ -1,107 +1,26 @@
-import { PrismaClient } from '@prisma/client';
+import { createSeedClient } from '@snaplet/seed';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { copycat } from '@snaplet/copycat';
+import { randomUUID } from 'node:crypto';
 
-const prisma = new PrismaClient();
-
-const placas = ['XYZ1234', 'ABC5678'];
-
-async function main() {
-  await prisma.user.upsert({
-    where: { email: 'alice@prisma.io' },
-    update: {},
-    create: {
-      email: 'alice@prisma.io',
-      name: 'Alice',
-      password: 'password',
-    },
-  });
-  await prisma.user.upsert({
-    where: { email: 'bob@prisma.io' },
-    update: {},
-    create: {
-      email: 'bob@prisma.io',
-      name: 'Bob',
-      password: 'password',
-    },
-  });
-  await prisma.veiculo.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      placa: placas[0],
-      tipo: 'carro',
-      user: {
-        connect: { email: 'bob@prisma.io' },
-      },
-    },
-  });
-  await prisma.veiculo.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      placa: placas[1],
-      tipo: 'moto',
-      user: {
-        connect: { email: 'alice@prisma.io' },
-      },
-    },
+export default async function main() {
+  const seed = await createSeedClient({
+    connect: true,
   });
 
-  const veiculos = await prisma.veiculo.findMany({
-    where: {
-      placa: {
-        in: placas,
-      },
-    },
-    select: {
-      id: true,
-      placa: true,
-    },
-  });
+  await seed.$resetDatabase();
 
-  if (veiculos.length !== placas.length) {
-    throw new Error('Nem todos os veículos foram encontrados');
-  }
-
-  // Passo 2: Fazer o upsert do serviço e conectar ao veículo usando o id obtido
-  await prisma.servico.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
-      id: 1,
-      nome: 'Troca de óleo',
-      descricao: 'Troca de óleo do motor',
-      valor: 100,
-      veiculos: {
-        create: {
-          veiculoId: veiculos[0].id,
-          dataInicio: new Date(),
-        },
-      },
-    },
-  });
-  await prisma.servico.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      id: 2,
-      nome: 'Lavagem completa',
-      descricao: 'Lava a lataria e o motor do veículo',
-      valor: 150,
-      veiculos: {
-        create: {
-          veiculoId: veiculos[1].id,
-          dataInicio: new Date(),
-        },
-      },
-    },
-  });
+  await seed.tipoVeiculo((x) => x(2));
+  await seed.user((x) => x(3, (ctx) => ({
+    idUser: randomUUID(),
+    email: copycat.email(ctx.seed, {
+      domain: '@gmail.com',
+    }),
+    password: '123456',
+  })));
+  await seed.veiculo((x) => x(5));
+  await seed.servico((x) => x(3));
+  await seed.servicoMetadados((x) => x(12));
 }
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+
+main();

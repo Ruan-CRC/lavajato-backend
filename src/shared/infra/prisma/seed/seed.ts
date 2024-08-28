@@ -1,13 +1,9 @@
-import { createSeedClient, servicoScalars, veiculoScalars } from '@snaplet/seed';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { copycat } from '@snaplet/copycat';
-import { randomUUID } from 'node:crypto';
+import { createSeedClient } from '@snaplet/seed';
 import dayjs from 'dayjs';
 import * as http from 'node:http';
+import prisma from '../prisma';
 
 const horasEntreServicos = 2;
-const veiculosInMemory: veiculoScalars[] = [];
-const servicosInMemory: servicoScalars[] = [];
 
 function getRandomIntInRange(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -26,6 +22,7 @@ function postData(data: string) {
   };
 
   const req = http.request(options, (res) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let responseData = '';
 
     res.on('data', (chunk) => {
@@ -33,7 +30,7 @@ function postData(data: string) {
     });
 
     res.on('end', () => {
-      console.log('Resposta do backend:', responseData);
+      // console.log('Resposta do backend:', responseData);
     });
   });
 
@@ -49,22 +46,10 @@ export default async function main() {
   const seed = await createSeedClient({
     connect: true,
   });
-  await seed.$resetDatabase();
 
-  await seed.tipoVeiculo((x) => x(3));
-  await seed.user((x) => x(5, (ctx) => ({
-    idUser: randomUUID(),
-    email: copycat.email(ctx.seed, {
-      domain: '@gmail.com',
-    }),
-    password: '123456',
-  })));
-  const { veiculo } = await seed.veiculo((x) => x(8));
-  const { servico } = await seed.servico((x) => x(3));
+  const veiclos = await prisma.veiculo.findMany();
+  const servcos = await prisma.servico.findMany();
   await seed.servicoMetadados((x) => x(12));
-
-  veiculosInMemory.push(...veiculo);
-  servicosInMemory.push(...servico);
 
   let agendamento: Date | number = new Date();
   let i = 250;
@@ -78,8 +63,8 @@ export default async function main() {
     const date = new Date(agendamento);
     const formattedDate = dayjs(date).toISOString();
 
-    const veiculoId = veiculosInMemory[getRandomIntInRange(0, veiculosInMemory.length - 1)];
-    const servicoId = servicosInMemory[getRandomIntInRange(0, servicosInMemory.length - 1)];
+    const veiculoId = veiclos[getRandomIntInRange(0, veiclos.length - 1)];
+    const servicoId = servcos[getRandomIntInRange(0, servcos.length - 1)];
 
     postData(JSON.stringify({
       veiculoId: veiculoId.id,
@@ -92,7 +77,3 @@ export default async function main() {
     i -= 1;
   }, 500);
 }
-
-main().catch((error) => {
-  console.error(error);
-});

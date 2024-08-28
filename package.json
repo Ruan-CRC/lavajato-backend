@@ -6,7 +6,7 @@
   "main": "index.js",
   "prisma": {
     "schema": "./src/shared/infra/prisma/schema.prisma",
-    "seed": "tsx src/shared/infra/prisma/seed/seed.ts"
+    "seed": "tsx src/shared/infra/prisma/seed/seedPrisma.ts"
   },
   "scripts": {
     "test": "vitest",
@@ -16,7 +16,7 @@
     "build": "tsup src",
     "prisma:migrate": "prisma migrate dev && npx @snaplet/seed sync",
     "prisma:studio": "npx prisma studio",
-    "prisma:seed": "tsx src/shared/infra/prisma/seed/seed.ts",
+    "prisma:seed": "tsx src/shared/infra/prisma/seed/seedPrisma.ts",
     "snaplet:sync": "npx @snaplet/seed sync",
     "snaplet:seed": "npx prisma db seed"
   },
