@@ -45,7 +45,7 @@ chmod +x start.sh
 docker compose up -d
 ```
 
-## 📬 Endpoints
+Aguarde os container, em especial o nginx, ficarem com status Started!
 
 ## 📬 Endpoints
 
@@ -60,7 +60,5 @@ O calendârio de agendamentos: [repositório front-end](https://github.com/Ruan-
 <img src="https://media.licdn.com/dms/image/v2/D4D22AQGJjca5ilC6Ug/feedshare-shrink_1280/feedshare-shrink_1280/0/1724435640594?e=1727308800&v=beta&t=QdJbW9-WTHd9VjNs3IrIZS9nI-cpoowthlVvQKr4Lp4" alt="10.000 request em 1 min">
 
 <img src="https://media.licdn.com/dms/image/v2/D4D22AQGoMgQIELu6mw/feedshare-shrink_1280/feedshare-shrink_1280/0/1724435640708?e=1727308800&v=beta&t=zb4lrsfkdrvVQNh8-MzUm33VwEA2irvswT35i1-P_8w">
-
-<img src="https://media.licdn.com/dms/image/v2/D4D22AQGfdWohrBgH_g/feedshare-shrink_800/feedshare-shrink_800/0/1723837765730?e=1727913600&v=beta&t=Kt78t5WP34CY81Ub1fqeDc_8dCuckZIr_PAzFVbWxQo">
 
 <img src="https://media.licdn.com/dms/image/v2/D4D22AQGfdWohrBgH_g/feedshare-shrink_800/feedshare-shrink_800/0/1723837765730?e=1727913600&v=beta&t=Kt78t5WP34CY81Ub1fqeDc_8dCuckZIr_PAzFVbWxQo">

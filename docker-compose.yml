@@ -5,12 +5,18 @@ services:
       dockerfile: Dockerfile
     image: nodejs
     container_name: app
+    env_file: .env
     entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.sh
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
-    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl --location 'localhost:3333/api/v1/healthcheck'"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
     volumes:
       - .:/usr/src/app
     deploy:
@@ -26,12 +32,12 @@ services:
       dockerfile: Dockerfile
     image: nodejs
     container_name: app-01
+    env_file: .env
     entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.sh
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
-    env_file: .env
     volumes:
       - .:/usr/src/app
     deploy:
@@ -90,7 +96,8 @@ services:
     ports:
       - "${STDOUT_PORT_API}:80"
     depends_on:
-      - app
+      app:
+        condition: service_healthy
 
   redis-ws:
     container_name: redis-ws
