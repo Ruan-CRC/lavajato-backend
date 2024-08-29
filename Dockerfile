@@ -11,8 +11,6 @@ COPY package*.json ./
 
 RUN npm ci
 
-RUN npm install prisma @prisma/client
-
 COPY . .
 
 EXPOSE 3333 5555 3334
