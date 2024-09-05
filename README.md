@@ -45,6 +45,16 @@ chmod +x start.sh
 docker compose up -d
 ```
 
+5.  **Rode as seeds**
+
+```bash
+docker compose exec app bash
+```
+
+```bash
+npm run prisma:seed
+```
+
 Aguarde os container, em especial o nginx, ficarem com status Started!
 
 ## 📬 Endpoints

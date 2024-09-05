@@ -7,11 +7,11 @@ RUN apt update && \
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY . .
 
 RUN npm ci
 
-COPY . .
+RUN npm i -g prisma
 
 EXPOSE 3333 5555 3334
 
