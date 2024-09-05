@@ -10,7 +10,7 @@ export default async function main() {
 
   await seed.$resetDatabase();
 
-  await seed.tipoVeiculo((x) => x(2));
+  await seed.tipoVeiculo((x) => x(3));
   await seed.user((x) => x(3, (ctx) => ({
     idUser: randomUUID(),
     email: copycat.email(ctx.seed, {
@@ -20,7 +20,11 @@ export default async function main() {
   })));
   await seed.veiculo((x) => x(5));
   await seed.servico((x) => x(3));
-  await seed.servicoMetadados((x) => x(12));
+  await seed.servicoMetadados((x) => x(8, {
+    tempo: 45,
+  }));
+  await seed.funcao((x) => x(1));
+  await seed.funcionario((x) => x(4));
 }
 
 main();

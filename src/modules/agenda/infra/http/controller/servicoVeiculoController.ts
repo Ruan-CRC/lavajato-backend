@@ -5,7 +5,6 @@ import { servicosAgendados } from '@/modules/agenda/utils/factory';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
 import { amqpInstance } from '@/shared/core/server';
 import { BadRequestError, NotFoundError } from '@/shared/infra/middlewares/errorAbst';
-import { AgendaCreateInputDTO } from '../../../entities/agenda.d';
 import ValidaAgenda from '@/modules/agenda/services/validaAgenda/validaAgenda';
 
 const { injectable } = decorators;
@@ -33,16 +32,19 @@ export default class ServicoVeiculoController {
       veiculoId: z.number(),
       servicoIds: z.array(z.number()),
       dataInicio: z.number(),
+      socket: z.string(),
     }), request.body);
 
-    const payload = {
-      veiculoId: request.body.veiculoId,
-      servicoIds: request.body.servicoIds,
-      dataInicio: new Date(request.body.dataInicio),
-    };
+    const {
+      veiculoId, servicoIds, dataInicio, socket,
+    } = request.body;
 
     const valida = new ValidaAgenda();
-    const agendaDadosValidados = await valida.main(payload);
+    const agendaDadosValidados = await valida.main({
+      veiculoId,
+      servicoIds,
+      dataInicio,
+    });
 
     if (valida.error.hasError === true) {
       throw new BadRequestError({
@@ -55,21 +57,29 @@ export default class ServicoVeiculoController {
       });
     }
 
-    const agenda: AgendaCreateInputDTO = {
+    const agenda = {
       id: agendaDadosValidados,
-      veiculoId: payload.veiculoId,
-      servicoIds: payload.servicoIds,
-      dataInicio: payload.dataInicio,
+      veiculoId,
+      servicoIds,
+      dataInicio,
+      socket,
     };
 
     const isPublished = await amqpInstance
       .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, agenda);
 
     if (!isPublished) {
-      return response.status(400);
+      throw new BadRequestError({
+        type: 'fila de serviço',
+        errors: [{
+          title: 'fila de serviço cheia!',
+          detail: 'Tente novamente mais tarde!',
+          instance: 'agenda/create/',
+        }],
+      });
     }
 
-    return response.status(200).json({
+    return response.status(202).json({
       message: 'Serviço solicitado!',
       id: agenda.id,
     });

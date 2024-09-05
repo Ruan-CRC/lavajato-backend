@@ -9,10 +9,14 @@ class WebsocketServer {
 
   private io: Server;
 
-  private socketInstance: Socket;
+  private socketId: string;
+
+  private redisClient: Redis;
+
+  private portRedis = Number(process.env.REDIS_PORT);
 
   private constructor() {
-    const redisClient = new Redis(6379, 'redis-ws');
+    this.redisClient = new Redis(this.portRedis, 'redis-ws');
 
     let port = Number(process.env.PORT_WS_SERVER);
     if (process.env.IS_TEST === 'true') {
@@ -20,13 +24,13 @@ class WebsocketServer {
     }
 
     const ioServer = new Server(port, {
-      adapter: createAdapter(redisClient),
+      adapter: createAdapter(this.redisClient),
       connectionStateRecovery: {
         maxDisconnectionDuration: 3000,
         skipMiddlewares: false,
       },
       cors: {
-        origin: ['http://localhost:5173', 'http://localhost:4173', 'https://k6.io/'],
+        origin: [process.env.CORS_CLIENT_URL, process.env.CORS_CLIENT_URL_PROD, 'https://k6.io/'],
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         credentials: true,
       },
@@ -44,24 +48,36 @@ class WebsocketServer {
     return WebsocketServer.instance;
   }
 
-  public get socket(): Socket {
-    return this.socketInstance;
-  }
-
   public get ioInstance(): Server {
     return this.io;
   }
 
-  private handleSocketEvents(socket: Socket) {
+  public async sendMessageToClient(userId: string, customEvent: string, message: any) {
+    const cliRedis = new Redis(this.portRedis, 'redis-ws');
+    const socketId = await cliRedis.get(`user:${userId}:socketId`);
+    if (socketId) {
+      this.io.to(socketId).emit(customEvent, message);
+    }
+  }
+
+  private async handleSocketEvents(socket: Socket) {
+    if (this.socketId) {
+      await this.redisClient.set(`user:${this.socketId}:socketId`, socket.id);
+    }
+
     agendaHandler(this.io, socket);
+
+    socket.on('disconnect', async () => {
+      if (this.socketId) {
+        await this.redisClient.del(`user:${this.socketId}:socketId`);
+      }
+    });
   }
 
   private webSocketEvents() {
     this.io.on('connection', (socket) => {
-      // if (process.env.IS_DEV === 'true') {
-      //   main();
-      // }
-      this.socketInstance = socket;
+      this.socketId = socket.id;
+
       this.handleSocketEvents(socket);
     });
   }

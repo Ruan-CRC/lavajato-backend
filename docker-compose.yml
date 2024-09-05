@@ -13,6 +13,8 @@ services:
         condition: service_healthy
     volumes:
       - .:/usr/src/app
+    environment:
+      - TZ=America/Sao_Paulo
     deploy:
       resources:
         limits:
@@ -34,6 +36,8 @@ services:
         condition: service_healthy
     volumes:
       - .:/usr/src/app
+    environment:
+      - TZ=America/Sao_Paulo
     deploy:
       resources:
         limits:
