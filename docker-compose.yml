@@ -16,9 +16,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl --location 'app:3333/api/v1/healthcheck'"]
       interval: 15s
-      retries: 5
+      retries: 20
       start_period: 30s
-      timeout: 4s
+      timeout: 5s
     deploy:
       resources:
         limits:
