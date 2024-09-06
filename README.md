@@ -42,7 +42,7 @@ chmod +x start.sh
 5.  **Subir os contêineres**
 
 ```bash
-docker compose up -d
+docker compose up
 ```
 
 5.  **Rode as seeds**
@@ -55,7 +55,7 @@ docker compose exec app bash
 npm run prisma:seed
 ```
 
-Aguarde os container, em especial o nginx, ficarem com status Started!
+Aguarde os container iniciarem, em especial o app iniciar o server, depois suba o [front-end](https://github.com/Ruan-CRC/lavajato-frontEnd.git)!
 
 ## 📬 Endpoints
 
