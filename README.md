@@ -45,10 +45,18 @@ chmod +x start.sh
 docker compose up
 ```
 
-5.  **Rode as seeds**
+5.  **Em outro terminal rode as seeds**
 
 ```bash
 docker compose exec app bash
+```
+
+```bash
+echo "n" | npx @snaplet/seed init
+```
+
+```bash
+npx @snaplet/seed sync
 ```
 
 ```bash
