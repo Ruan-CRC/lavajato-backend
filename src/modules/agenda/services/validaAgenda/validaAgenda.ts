@@ -19,10 +19,10 @@ export default class ValidaAgenda {
   estaNoHorarioDeFuncionamento(dataInicio: Date): void {
     const HORARIO_ABRE_LAVAJATO = 8;
     const HORARIO_FECHA_LAVAJATO = 18;
-    const HORA_INICIA_AGENDA = new Date(dataInicio).getHours();
+    const HORA_INICIA_AGENDA = dataInicio.getUTCHours();
 
     if (
-      (HORA_INICIA_AGENDA < HORARIO_ABRE_LAVAJATO) || (HORA_INICIA_AGENDA > HORARIO_FECHA_LAVAJATO)
+      (HORA_INICIA_AGENDA <= HORARIO_ABRE_LAVAJATO) || (HORA_INICIA_AGENDA > HORARIO_FECHA_LAVAJATO)
     ) {
       this._error.hasError = true;
       this._error.message.push('Horário fora do expediente');

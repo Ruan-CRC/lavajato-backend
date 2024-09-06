@@ -16,7 +16,7 @@ export default class AgendaControllerWS {
       id: payloadJson.id,
       veiculoId: payloadJson.veiculoId,
       servicoIds: payloadJson.servicoIds,
-      dataInicio: new Date(payloadJson.dataInicio),
+      dataInicio: payloadJson.dataInicio,
     };
 
     const valida = new ValidaAgenda();
@@ -42,7 +42,7 @@ export default class AgendaControllerWS {
     const result = await addServicosService.add(props);
 
     ioInstance.emit('agenda:create', result);
-    ioInstance.to(socketId).emit('agenda:confirmada', `agenda: ${props.dataInicio.toUTCString()} criada com sucesso`);
+    ioInstance.to(socketId).emit('agenda:confirmada', `agenda: ${props.dataInicio} criada com sucesso`);
   }
 
   enviarAgendas = async (socket: Socket) => {

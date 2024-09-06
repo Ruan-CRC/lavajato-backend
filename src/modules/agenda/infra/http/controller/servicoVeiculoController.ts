@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { decorators } from 'tsyringe';
 import { z } from 'zod';
+import dayjs from 'dayjs';
 import { servicosAgendados } from '@/modules/agenda/utils/factory';
 import validaDataWhitSchemaZod from '@/shared/infra/helpers/parserZod';
 import { amqpInstance } from '@/shared/core/server';
@@ -39,11 +40,13 @@ export default class ServicoVeiculoController {
       veiculoId, servicoIds, dataInicio, socket,
     } = request.body;
 
+    const inTimezoneDataInicio = dayjs(dataInicio).subtract(3, 'hour').toDate();
+
     const valida = new ValidaAgenda();
     const agendaDadosValidados = await valida.main({
       veiculoId,
       servicoIds,
-      dataInicio,
+      dataInicio: inTimezoneDataInicio,
     });
 
     if (valida.error.hasError === true) {
@@ -57,16 +60,14 @@ export default class ServicoVeiculoController {
       });
     }
 
-    const agenda = {
-      id: agendaDadosValidados,
-      veiculoId,
-      servicoIds,
-      dataInicio,
-      socket,
-    };
-
     const isPublished = await amqpInstance
-      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, agenda);
+      .publishInQueue(process.env.RABBITMQ_AGENDA_QUEUE, {
+        id: agendaDadosValidados,
+        veiculoId,
+        servicoIds,
+        dataInicio: inTimezoneDataInicio,
+        socket,
+      });
 
     if (!isPublished) {
       throw new BadRequestError({
@@ -81,7 +82,7 @@ export default class ServicoVeiculoController {
 
     return response.status(202).json({
       message: 'Serviço solicitado!',
-      id: agenda.id,
+      id: agendaDadosValidados,
     });
   }
 }
