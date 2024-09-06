@@ -13,8 +13,12 @@ services:
         condition: service_healthy
     volumes:
       - .:/usr/src/app
-    environment:
-      - TZ=America/Sao_Paulo
+    healthcheck:
+      test: ["CMD-SHELL", "curl --location 'app:3333/api/v1/healthcheck'"]
+      interval: 15s
+      retries: 5
+      start_period: 30s
+      timeout: 4s
     deploy:
       resources:
         limits:
@@ -36,8 +40,6 @@ services:
         condition: service_healthy
     volumes:
       - .:/usr/src/app
-    environment:
-      - TZ=America/Sao_Paulo
     deploy:
       resources:
         limits:
@@ -94,7 +96,8 @@ services:
     ports:
       - "${STDOUT_PORT_API}:80"
     depends_on:
-      - app
+      app:
+        condition: service_healthy
 
   redis-ws:
     container_name: redis-ws
