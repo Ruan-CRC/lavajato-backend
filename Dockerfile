@@ -13,7 +13,7 @@ COPY . .
 
 RUN npm ci
 
-RUN npm i -g prisma
+RUN npm install prisma -g
 
 EXPOSE 3333 5555 3334
 
