@@ -22,7 +22,7 @@ export default class ValidaAgenda {
     const HORA_INICIA_AGENDA = dataInicio.getUTCHours();
 
     if (
-      (HORA_INICIA_AGENDA <= HORARIO_ABRE_LAVAJATO) || (HORA_INICIA_AGENDA > HORARIO_FECHA_LAVAJATO)
+      (HORA_INICIA_AGENDA < HORARIO_ABRE_LAVAJATO) || (HORA_INICIA_AGENDA > HORARIO_FECHA_LAVAJATO)
     ) {
       this._error.hasError = true;
       this._error.message.push('Horário fora do expediente');
