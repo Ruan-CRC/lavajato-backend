@@ -52,11 +52,11 @@ docker compose exec app bash
 ```
 
 ```bash
-echo "n" | npx @snaplet/seed init
+npx prisma migrate dev
 ```
 
 ```bash
-npx @snaplet/seed sync
+echo "n" | npx @snaplet/seed init
 ```
 
 ```bash
