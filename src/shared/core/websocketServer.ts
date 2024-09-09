@@ -30,7 +30,7 @@ class WebsocketServer {
         skipMiddlewares: false,
       },
       cors: {
-        origin: [process.env.CORS_CLIENT_URL, process.env.CORS_CLIENT_URL_PROD, 'https://k6.io/'],
+        origin: [`${process.env.CORS_CLIENT_URL}`, `${process.env.CORS_CLIENT_URL_PROD}`, 'https://k6.io/'],
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
         credentials: true,
       },
