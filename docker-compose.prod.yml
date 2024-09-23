@@ -5,20 +5,16 @@ services:
       dockerfile: Dockerfile.prod
     image: nodejs
     container_name: app
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.prod.sh
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     env_file: .env
     volumes:
       - .:/usr/src/app
     deploy:
       resources:
         limits:
-          memory: 500M
-        reservations:
           memory: 300M
+        reservations:
+          memory: 100M
 
   app-01:
     build:
@@ -26,124 +22,16 @@ services:
       dockerfile: Dockerfile.prod
     image: nodejs
     container_name: app-01
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.prod.sh
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     env_file: .env
     volumes:
       - .:/usr/src/app
     deploy:
       resources:
         limits:
-          memory: 500M
-        reservations:
           memory: 300M
-
-  app-02:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    image: nodejs
-    container_name: app-02
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.prod.sh
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file: .env
-    volumes:
-      - .:/usr/src/app
-    deploy:
-      resources:
-        limits:
-          memory: 500M
         reservations:
-          memory: 300M
-
-  app-03:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    image: nodejs
-    container_name: app-03
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.prod.sh
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file: .env
-    volumes:
-      - .:/usr/src/app
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-        reservations:
-          memory: 300M
-
-  app-04:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    image: nodejs
-    container_name: app-04
-    entrypoint: wait-for rabbitmq:5672 -t 20 -- ./start.prod.sh
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file: .env
-    volumes:
-      - .:/usr/src/app
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-        reservations:
-          memory: 300M
-
-  db:
-    image: bitnami/postgresql:latest
-    container_name: db
-    restart: always
-    tty: true
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 5s
-    environment:
-      - POSTGRESQL_DATABASE=${DB_DATABASE}
-      - POSTGRESQL_USERNAME=${DB_USERNAME}
-      - POSTGRESQL_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - .docker/postgres_data:/bitnami/postgresql/data:rw
-    ports:
-      - "${STDOUT_DB_PORT}:5432"
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    hostname: rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
-    ports:
-      - "${PORT_RABBITMQ}:5672"
-      - "${PORT_RABBITMQ_MANAGEMENT}:15672"
-    volumes:
-      - .docker/rabbitmq/data:/var/lib/rabbitmq
-      - .docker/rabbitmq/log:/var/log/rabbitmq
-    deploy:
-      resources:
-        limits:
-          memory: 1g
-        reservations:
-          memory: 300M
+          memory: 100M
 
   nginx:
     build:
